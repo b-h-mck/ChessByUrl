@@ -1,4 +1,4 @@
-﻿namespace ChessByUrl.Rules.Standard.Pieces
+﻿namespace ChessByUrl.Rules.Orthodox.Pieces
 {
     public class KingBehaviour : IPieceBehaviour
     {

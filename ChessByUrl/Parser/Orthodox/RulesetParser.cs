@@ -1,13 +1,13 @@
 ﻿using ChessByUrl.Rules;
-using ChessByUrl.Rules.Standard;
+using ChessByUrl.Rules.Orthodox;
 
-namespace ChessByUrl.Parser.Standard
+namespace ChessByUrl.Parser.Orthodox
 {
-    public class StandardRulesetParser : IRulesetParser
+    public class RulesetParser : IRulesetParser
     {
         public string? Serialise(IRuleset ruleset)
         {
-            if (ruleset is StandardRuleset)
+            if (ruleset is Ruleset)
                 return "s";
             return null;
         }
@@ -15,7 +15,7 @@ namespace ChessByUrl.Parser.Standard
         public IRuleset? Parse(string rulesetString)
         {
             if (rulesetString == "s")
-                return new StandardRuleset();
+                return new Ruleset();
             return null;
         }
 

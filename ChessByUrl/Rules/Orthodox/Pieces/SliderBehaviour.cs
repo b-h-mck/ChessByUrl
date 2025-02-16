@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ChessByUrl.Rules.Standard.Pieces
+namespace ChessByUrl.Rules.Orthodox.Pieces
 {
     public class SliderBehaviour : IPieceBehaviour
     {
@@ -53,7 +53,7 @@ namespace ChessByUrl.Rules.Standard.Pieces
             var to = new Coords(from.Rank + direction.Rank, from.File + direction.File);
             while (to.Rank >= 0 && to.Rank <= 7 && to.File >= 0 && to.File <= 7)
             {
-                var piece = board.GetPiece(to) as StandardPiece;
+                var piece = board.GetPiece(to) as OrthodoxPiece;
 
                 // If there's a piece here, add it if it's a different colour. In either case, stop.
                 if (piece != null)

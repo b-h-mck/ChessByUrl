@@ -58,8 +58,8 @@ namespace ChessByUrl.Parser
                 if (_instance == null)
                 {
                     _instance = new ParserCollection();
-                    _instance.AddRulesetParser(new Standard.StandardRulesetParser());
-                    _instance.AddBoardParser(new Standard.StandardStartBoardParser());
+                    _instance.AddRulesetParser(new Orthodox.RulesetParser());
+                    _instance.AddBoardParser(new Orthodox.StartBoardParser());
                 }
                 return _instance;
             }

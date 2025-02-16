@@ -1,11 +1,10 @@
-﻿
-using ChessByUrl.Rules.Standard.Pieces;
+﻿using ChessByUrl.Rules.Orthodox.Pieces;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace ChessByUrl.Rules.Standard
+namespace ChessByUrl.Rules.Orthodox
 {
-    public class StandardRuleset : IRuleset
+    public class Ruleset : IRuleset
     {
         private IEnumerable<Player>? _players;
         public IEnumerable<Player> Players => _players ??=
@@ -17,13 +16,13 @@ namespace ChessByUrl.Rules.Standard
 
         private IEnumerable<Piece>? _pieces;
         public IEnumerable<Piece> Pieces => _pieces ??=
-            (from type in Enum.GetValues<StandardPieceType>()
+            (from type in Enum.GetValues<OrthodoxPieceType>()
              from player in Players
-             select StandardPiece.Create(player, type)).ToList();
+             select OrthodoxPiece.Create(player, type)).ToList();
 
-        public Piece GetStandardPiece(StandardPieceType pieceType, int playerId)
+        public Piece GetOrthodoxPiece(OrthodoxPieceType pieceType, int playerId)
         {
-            return Pieces.Cast<StandardPiece>().Single(p => p.Player.Id == playerId && p.Type == pieceType);
+            return Pieces.Cast<OrthodoxPiece>().Single(p => p.Player.Id == playerId && p.Type == pieceType);
         }
 
 
@@ -34,7 +33,7 @@ namespace ChessByUrl.Rules.Standard
 
         public IEnumerable<Move> GetLegalMoves(Board board, Coords from)
         {
-            var piece = board.GetPiece(from) as StandardPiece;
+            var piece = board.GetPiece(from) as OrthodoxPiece;
             if (piece == null || piece.Player.Id != board.CurrentPlayer.Id)
             {
                 return Enumerable.Empty<Move>();

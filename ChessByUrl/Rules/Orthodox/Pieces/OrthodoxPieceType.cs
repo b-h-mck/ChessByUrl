@@ -1,6 +1,6 @@
-﻿namespace ChessByUrl.Rules.Standard.Pieces
+﻿namespace ChessByUrl.Rules.Orthodox.Pieces
 {
-    public enum StandardPieceType
+    public enum OrthodoxPieceType
     {
         Pawn,
         /// <summary>

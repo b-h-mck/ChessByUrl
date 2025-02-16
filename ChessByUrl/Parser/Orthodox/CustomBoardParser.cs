@@ -1,18 +1,18 @@
 ﻿using ChessByUrl.Rules;
-using ChessByUrl.Rules.Standard;
-using ChessByUrl.Rules.Standard.Pieces;
+using ChessByUrl.Rules.Orthodox;
+using ChessByUrl.Rules.Orthodox.Pieces;
 using ChessByUrl.Utils;
 
-namespace ChessByUrl.Parser.Standard
+namespace ChessByUrl.Parser.Orthodox
 {
-    public class StandardCustomBoardParser : IBoardParser
+    public class CustomBoardParser : IBoardParser
     {
-        public StandardCustomBoardParser() { }
+        public CustomBoardParser() { }
 
         public string? Serialise(IRuleset ruleset, Board board)
         {
-            var standardRuleset = ruleset as StandardRuleset;
-            if (standardRuleset == null)
+            var orthodoxRuleset = ruleset as Ruleset;
+            if (orthodoxRuleset == null)
                 return null;
             var maxPieceId = ruleset.Pieces.Max(piece => piece.Id);
             var maxPlayerId = ruleset.Players.Max(player => player.Id);
@@ -24,7 +24,7 @@ namespace ChessByUrl.Parser.Standard
             {
                 for (var file = 0; file < 8; file++)
                 {
-                    var piece = board.GetPiece(new Coords(rank, file)) as StandardPiece;
+                    var piece = board.GetPiece(new Coords(rank, file)) as OrthodoxPiece;
                     if (piece != null)
                     {
                         byteWriter.Write(piece.Id, 0, maxPieceId);
@@ -44,8 +44,8 @@ namespace ChessByUrl.Parser.Standard
         public Board? Parse(IRuleset ruleset, string boardString)
         {
 
-            var standardRuleset = ruleset as StandardRuleset;
-            if (standardRuleset == null)
+            var orthodoxRuleset = ruleset as Ruleset;
+            if (orthodoxRuleset == null)
                 return null;
             var maxPieceId = ruleset.Pieces.Max(piece => piece.Id);
             var maxPlayerId = ruleset.Players.Max(player => player.Id);

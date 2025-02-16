@@ -1,4 +1,4 @@
-﻿namespace ChessByUrl.Rules.Standard.Pieces
+﻿namespace ChessByUrl.Rules.Orthodox.Pieces
 {
     public class PawnBehaviour : IPieceBehaviour
     {
@@ -50,7 +50,7 @@
                     continue;
                 }
 
-                var piece = board.GetPiece(to) as StandardPiece;
+                var piece = board.GetPiece(to) as OrthodoxPiece;
 
                 // If there's an opposite-coloured piece in the square, we can move there.
                 if (piece != null && piece.Player.Id != board.CurrentPlayer.Id)
@@ -61,10 +61,10 @@
                 else if (piece == null)
                 {
                     // En passant target's rank will be the same as the attacker's.
-                    var enPassantTargetPiece = board.GetPiece(from) as StandardPiece;
+                    var enPassantTargetPiece = board.GetPiece(from) as OrthodoxPiece;
                     if (enPassantTargetPiece != null 
                         && enPassantTargetPiece.Player.Id != board.CurrentPlayer.Id
-                        && enPassantTargetPiece.Type == StandardPieceType.PawnWhoJustMovedTwoSquares)
+                        && enPassantTargetPiece.Type == OrthodoxPieceType.PawnWhoJustMovedTwoSquares)
                     {
                         yield return new Move { From = from, To = to };
                     }
@@ -76,9 +76,9 @@
         {
             if (move.To.Rank == 0 || move.To.Rank == 7)
             {
-                foreach (var promotionType in new[] { StandardPieceType.Queen, StandardPieceType.Rook, StandardPieceType.Bishop, StandardPieceType.Knight })
+                foreach (var promotionType in new[] { OrthodoxPieceType.Queen, OrthodoxPieceType.Rook, OrthodoxPieceType.Bishop, OrthodoxPieceType.Knight })
                 {
-                    var promotionPiece = StandardPiece.Create(board.CurrentPlayer, promotionType);
+                    var promotionPiece = OrthodoxPiece.Create(board.CurrentPlayer, promotionType);
                     yield return new Move { From = move.From, To = move.To, ChangeTo = promotionPiece };
                 }
             }
