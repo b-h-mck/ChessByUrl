@@ -6,9 +6,26 @@
     Response.ContentType = "image/svg+xml";
 }
 
+
 <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-    <rect x="10" y="10" width="80" height="80" style="fill:blue;stroke:pink;stroke-width:5;opacity:0.5" />
-    <text x="50" y="50" font-family="Verdana" font-size="20" fill="white" text-anchor="middle" alignment-baseline="middle">
-        @Model.Ruleset
-    </text>
+    @if (Model.Board != null)
+    {
+        for (int rank = 0; rank < Model.Board.Ranks.Count; rank++)
+        {
+            for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
+            {
+                var x = file * 10;
+                var y = rank * 10;
+                var fillColor = (rank + file) % 2 == 0 ? "lightgray" : "darkgray";
+                var piece = Model.Board.Ranks[rank][file];
+                <rect x="@x" y="@y" width="10" height="10" fill="@fillColor" stroke="black"></rect>
+                @if (piece != null)
+                {
+                    <g>
+                        <text x="@(x + 5)" y="@(y + 6)" font-size="7" fill="black" text-anchor="middle" dominant-baseline="middle" pointer-events="none">@piece.Unicode</text>
+                    </g>
+                }
+            }
+        }
+    }
 </svg>

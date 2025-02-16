@@ -1,4 +1,5 @@
 ﻿
+using ChessByUrl.Rules.Standard.Pieces;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
@@ -13,7 +14,6 @@ namespace ChessByUrl.Rules.Standard
             new Player { Id = 1, Name = "Black" }
         ];
 
-        public Coords MaxRankFile => new Coords(7, 7);
 
         private IEnumerable<Piece>? _pieces;
         public IEnumerable<Piece> Pieces => _pieces ??=
@@ -21,28 +21,28 @@ namespace ChessByUrl.Rules.Standard
              from player in Players
              select StandardPiece.Create(player, type)).ToList();
 
+        public Piece GetStandardPiece(StandardPieceType pieceType, int playerId)
+        {
+            return Pieces.Cast<StandardPiece>().Single(p => p.Player.Id == playerId && p.Type == pieceType);
+        }
 
+
+        public bool IsInBounds(Coords coords)
+        {
+            return coords.Rank >= 0 && coords.Rank <= 7 && coords.File >= 0 && coords.File <= 7;
+        }
 
         public IEnumerable<Move> GetLegalMoves(Board board, Coords from)
         {
-            var piece = board.Squares[from.Rank, from.File] as StandardPiece;
+            var piece = board.GetPiece(from) as StandardPiece;
             if (piece == null || piece.Player.Id != board.CurrentPlayer.Id)
             {
                 return Enumerable.Empty<Move>();
             }
 
-            IEnumerable<Move> moves = piece.Type switch
-            {
-                StandardPieceType.Pawn or StandardPieceType.PawnWhoJustMovedTwoSquares => GetPawnMoves(board, from),
-                StandardPieceType.Knight => GetKnightMoves(board, from),
-                StandardPieceType.Bishop => GetSliderMoves(board, from, diagonal: true),
-                StandardPieceType.Rook or StandardPieceType.RookWithCastlingRights => GetSliderMoves(board, from, orthogonal: true),
-                StandardPieceType.Queen => GetSliderMoves(board, from, orthogonal: true, diagonal: true),
-                StandardPieceType.King => GetKingMoves(board, from),
-                _ => throw new ArgumentOutOfRangeException(nameof(piece.Type))
-            };
+            IEnumerable<Move> moves = piece.Behaviour.GetLegalMoves(board, from);
 
-            moves = moves.Where(move => !WouldPutCurrentPlayerInCheck(board, move));
+            //moves = moves.Where(move => !WouldPutCurrentPlayerInCheck(board, move));
             return moves.OrderBy(move => move.To.Rank).ThenBy(move => move.To.File).ToArray();
         }
 

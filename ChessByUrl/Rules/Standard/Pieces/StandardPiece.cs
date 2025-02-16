@@ -1,23 +1,5 @@
-﻿namespace ChessByUrl.Rules.Standard
+﻿namespace ChessByUrl.Rules.Standard.Pieces
 {
-    public enum StandardPieceType
-    {
-        Pawn,
-        /// <summary>
-        /// A pawn that has just moved two squares and is vulnerable to en passant. Will become a Pawn on the next turn.
-        /// </summary>
-        PawnWhoJustMovedTwoSquares,
-        Knight,
-        Bishop,
-        Rook,
-        /// <summary>
-        /// A rook that could castle, i.e. it hasn't moved and its King hasn't moved. Other castling rules are not taken into account.
-        /// </summary>
-        RookWithCastlingRights,
-        Queen,
-        King
-    }
-
     public class StandardPiece : Piece
     {
         public static StandardPiece Create(Player player, StandardPieceType type)
@@ -27,12 +9,14 @@
                 Id = Enum.GetValues<StandardPieceType>().Count() * player.Id + (int)type,
                 Player = player,
                 Type = type,
+                Behaviour = GetPieceBehaviour(type),
                 Name = GetPieceShortName(type),
                 Description = GetPieceDescription(player, type),
                 Unicode = GetPieceUnicode(player, type)
             };
         }
         public required StandardPieceType Type { get; init; }
+        public required IPieceBehaviour Behaviour { get; init; }
 
 
         private static string GetPieceShortName(StandardPieceType pieceType)
@@ -42,6 +26,22 @@
                 StandardPieceType.PawnWhoJustMovedTwoSquares => "Pawn",
                 StandardPieceType.RookWithCastlingRights => "Rook",
                 _ => pieceType.ToString()
+            };
+        }
+
+        private static IPieceBehaviour GetPieceBehaviour(StandardPieceType pieceType)
+        {
+            return pieceType switch
+            {
+                StandardPieceType.Pawn or
+                StandardPieceType.PawnWhoJustMovedTwoSquares => new PawnBehaviour(),
+                StandardPieceType.Knight => new KnightBehaviour(),
+                StandardPieceType.Bishop => new SliderBehaviour(diagonal: true),
+                StandardPieceType.Rook or
+                StandardPieceType.RookWithCastlingRights => new SliderBehaviour(orthogonal: true),
+                StandardPieceType.Queen => new SliderBehaviour(orthogonal: true, diagonal: true),
+                StandardPieceType.King => new KingBehaviour(),
+                _ => throw new ArgumentOutOfRangeException(nameof(pieceType))
             };
         }
 
