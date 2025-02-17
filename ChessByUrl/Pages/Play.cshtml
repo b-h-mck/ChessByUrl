@@ -1,0 +1,26 @@
+﻿@page "/play/{ruleset?}/{state?}/{moves?}"
+@model PlayModel
+
+
+<table class="board">
+    @if (Model.Board != null)
+    {
+        for (int rank = Model.Board.Ranks.Count - 1; rank >= 0; rank--)
+        {
+            <tr>
+                @for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
+                {
+                    var squareColour = (rank + file) % 2 == 0 ? "lightSquare" : "darkSquare";
+                    var piece = Model.Board.Ranks[rank][file];
+                    <td class="@squareColour" onclick="highlightSquare(this)">
+                        @if (piece != null)
+                        {
+                            <span>@piece.Unicode</span>
+                        }
+                    </td>
+                }
+            </tr>
+        }
+    }
+</table>
+

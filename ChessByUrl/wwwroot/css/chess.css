@@ -1,0 +1,41 @@
+﻿table.board {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 800px; /* Adjust as needed for larger screens */
+    margin: auto;
+}
+
+.board td {
+    width: calc(100% / 8); /* Assuming an 8x8 board */
+    position: relative;
+    padding-bottom: calc(100% / 8); /* Maintain aspect ratio */
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid black;
+}
+
+    .board td span {
+        font-size: 3.5em;
+        line-height: 1; /* Ensures the text is vertically centered */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+    }
+
+.board .lightSquare {
+    background-color: lightgray;
+}
+
+.board .darkSquare {
+    background-color: darkgray;
+}
+
+    .board .lightSquare.selected, .board .darkSquare.selected {
+        background-color: yellow;
+    }
+
+    .board .lightSquare.validmove, .board .darkSquare.validmove {
+        background-color: lightcyan;
+    }
