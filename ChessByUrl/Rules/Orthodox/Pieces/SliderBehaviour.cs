@@ -71,5 +71,9 @@ namespace ChessByUrl.Rules.Orthodox.Pieces
             }
         }
 
+        public Board? TryApplySpecialMove(Board board, Move move)
+        {
+            return null;
+        }
     }
 }

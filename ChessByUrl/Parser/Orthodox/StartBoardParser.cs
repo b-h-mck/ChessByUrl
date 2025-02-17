@@ -10,8 +10,8 @@ namespace ChessByUrl.Parser.Orthodox
 
         public string? Serialise(IRuleset ruleset, Board board)
         {
-            if (ruleset is Ruleset)
-                return "s";
+            //if (ruleset is Ruleset)
+            //    return "s";
             return null;
         }
 

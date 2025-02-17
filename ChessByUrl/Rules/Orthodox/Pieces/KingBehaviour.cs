@@ -6,5 +6,10 @@
         {
             return Enumerable.Empty<Move>();
         }
+
+        public Board? TryApplySpecialMove(Board board, Move move)
+        {
+            return null;
+        }
     }
 }

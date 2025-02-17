@@ -48,7 +48,20 @@ namespace ChessByUrl.Rules.Orthodox
 
         public Board ApplyMove(Board board, Move move)
         {
-            throw new NotImplementedException();
+            var newPlayer = Players.Single(p => p.Id != board.CurrentPlayer.Id);
+            board = board.SetCurrentPlayer(newPlayer);
+
+            var piece = board.GetPiece(move.From) as OrthodoxPiece;
+            if (piece == null)
+                return board;
+
+            var boardAfterSpecialMove = piece.Behaviour.TryApplySpecialMove(board, move);
+            if (boardAfterSpecialMove != null)
+                return boardAfterSpecialMove;
+
+            board = board.ReplacePiece(move.From, null);
+            board = board.ReplacePiece(move.To, piece);
+            return board;
         }
     }
 

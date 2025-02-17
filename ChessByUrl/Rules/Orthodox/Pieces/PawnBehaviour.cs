@@ -13,6 +13,7 @@
             var moves = GetStraightMoves(board, from, direction);
             moves = moves.Concat(GetAttackMoves(board, from, direction));
             moves = moves.SelectMany(move => GetPromotionMoves(board, move));
+            moves = moves.Select(move => AdjustForTwoSquareMoves(board, move));
             return moves;
         }
 
@@ -33,6 +34,7 @@
                     to = to + direction;
                     if (board.GetPiece(to) == null)
                     {
+                        var twoSquarePawn = OrthodoxPiece.Create(board.CurrentPlayer, OrthodoxPieceType.PawnWhoJustMovedTwoSquares);
                         yield return new Move { From = from, To = to };
                     }
                 }
@@ -61,7 +63,7 @@
                 else if (piece == null)
                 {
                     // En passant target's rank will be the same as the attacker's.
-                    var enPassantTargetPiece = board.GetPiece(from) as OrthodoxPiece;
+                    var enPassantTargetPiece = board.GetPiece(new Coords(from.Rank, to.File)) as OrthodoxPiece;
                     if (enPassantTargetPiece != null 
                         && enPassantTargetPiece.Player.Id != board.CurrentPlayer.Id
                         && enPassantTargetPiece.Type == OrthodoxPieceType.PawnWhoJustMovedTwoSquares)
@@ -86,6 +88,41 @@
             {
                 yield return move;
             }
+        }
+
+        private Move AdjustForTwoSquareMoves(Board board, Move move)
+        {
+            var isTwoSquarePawn = (board.GetPiece(move.From) as OrthodoxPiece)?.Type == OrthodoxPieceType.PawnWhoJustMovedTwoSquares;
+            var isTwoSquareMove = Math.Abs(move.From.Rank - move.To.Rank) == 2;
+            if (isTwoSquarePawn && !isTwoSquareMove)
+            {
+                return new Move { From = move.From, To = move.To, ChangeTo = OrthodoxPiece.Create(board.CurrentPlayer, OrthodoxPieceType.Pawn) };
+            }
+            if (!isTwoSquarePawn && isTwoSquareMove)
+            {
+                return new Move { From = move.From, To = move.To, ChangeTo = OrthodoxPiece.Create(board.CurrentPlayer, OrthodoxPieceType.PawnWhoJustMovedTwoSquares) };
+            }
+            return move;
+        }
+
+        public Board? TryApplySpecialMove(Board board, Move move)
+        {
+            if (move.ChangeTo != null) // Promotion or double move
+            {
+                board = board.ReplacePiece(move.From, null);
+                board = board.ReplacePiece(move.To, move.ChangeTo);
+                return board;
+            }
+            else if (move.From.File != move.To.File && board.GetPiece(move.To) == null) // En passant
+            {
+                var pawn = board.GetPiece(move.From) as OrthodoxPiece;
+                var victimCoords = new Coords(move.From.Rank, move.To.File);
+                board = board.ReplacePiece(move.From, null);
+                board = board.ReplacePiece(victimCoords, null);
+                board = board.ReplacePiece(move.To, pawn);
+                return board;
+            }
+            return null;
         }
 
     }

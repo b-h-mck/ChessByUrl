@@ -30,5 +30,10 @@
             new Coords(-2, -1),
             new Coords(-1, -2)
         ];
+
+        public Board? TryApplySpecialMove(Board board, Move move)
+        {
+            return null;
+        }
     }
 }

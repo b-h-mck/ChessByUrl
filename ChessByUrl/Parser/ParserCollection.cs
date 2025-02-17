@@ -15,6 +15,7 @@ namespace ChessByUrl.Parser
         public void AddMovesParser(IMovesParser parser) => _movesParsers.Add(parser);
 
 
+
         public IRuleset? ParseRuleset(string rulesetString)
         {
             foreach (var parser in _rulesetParsers)
@@ -46,6 +47,39 @@ namespace ChessByUrl.Parser
                     return moves;
             }
             return Enumerable.Empty<Move>();
+        }
+
+        public string? SerialiseRuleset(IRuleset ruleset)
+        {
+            foreach (var parser in _rulesetParsers)
+            {
+                var rulesetString = parser.Serialise(ruleset);
+                if (rulesetString != null)
+                    return rulesetString;
+            }
+            return null;
+        }
+
+        public string? SerialiseBoard(IRuleset ruleset, Board board)
+        {
+            foreach (var parser in _boardParsers)
+            {
+                var boardString = parser.Serialise(ruleset, board);
+                if (boardString != null)
+                    return boardString;
+            }
+            return null;
+        }
+
+        public string? SerialiseMoves(IRuleset ruleset, Board initialBoard, IEnumerable<Move> moves)
+        {
+            foreach (var parser in _movesParsers)
+            {
+                var movesString = parser.Serialise(ruleset, initialBoard, moves);
+                if (movesString != null)
+                    return movesString;
+            }
+            return null;
         }
 
 

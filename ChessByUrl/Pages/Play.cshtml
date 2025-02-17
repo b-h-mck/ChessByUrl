@@ -1,18 +1,26 @@
 ﻿@page "/play/{ruleset?}/{state?}/{moves?}"
+@using System.Text.Json
+@using ChessByUrl.Rules
 @model PlayModel
 
 
-<table class="board">
-    @if (Model.Board != null)
+<table class="board showMoveFrom">
+    @if (Model.Board != null && Model.LegalMoves != null)
     {
         for (int rank = Model.Board.Ranks.Count - 1; rank >= 0; rank--)
         {
             <tr>
                 @for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
                 {
-                    var squareColour = (rank + file) % 2 == 0 ? "lightSquare" : "darkSquare";
+                    var coords = new Coords(rank, file);
                     var piece = Model.Board.Ranks[rank][file];
-                    <td class="@squareColour" onclick="highlightSquare(this)">
+                    var legalMoves = Model.LegalMoves[rank][file];
+
+                    var squareClass = "square";
+                    squareClass += (rank + file) % 2 == 0 ? " light" : " dark";
+                    squareClass += (legalMoves == null) ? "" : " moveFrom";
+
+                    <td class="@squareClass" onclick="onSquareClick(this)" data-coords=@JsonSerializer.Serialize(coords) data-legalmoves="@JsonSerializer.Serialize(legalMoves)">
                         @if (piece != null)
                         {
                             <span>@piece.Unicode</span>
