@@ -50,6 +50,7 @@ namespace ChessByUrl.Parser
 
 
         // TODO: Get rid of this abomination and do proper dependency injection
+        // Ultimately we want to include all available parsers
         private static ParserCollection? _instance;
         public static ParserCollection Instance
         {
@@ -60,6 +61,7 @@ namespace ChessByUrl.Parser
                     _instance = new ParserCollection();
                     _instance.AddRulesetParser(new Orthodox.RulesetParser());
                     _instance.AddBoardParser(new Orthodox.StartBoardParser());
+                    _instance.AddBoardParser(new Orthodox.CustomBoardParser());
                 }
                 return _instance;
             }

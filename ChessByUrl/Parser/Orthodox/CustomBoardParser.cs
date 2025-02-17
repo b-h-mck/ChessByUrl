@@ -15,6 +15,7 @@ namespace ChessByUrl.Parser.Orthodox
             if (orthodoxRuleset == null)
                 return null;
             var maxPieceId = ruleset.Pieces.Max(piece => piece.Id);
+            var eofId = maxPieceId + 1;
             var maxPlayerId = ruleset.Players.Max(player => player.Id);
 
             var byteWriter = new PackedByteWriter();
@@ -27,31 +28,31 @@ namespace ChessByUrl.Parser.Orthodox
                     var piece = board.GetPiece(new Coords(rank, file)) as OrthodoxPiece;
                     if (piece != null)
                     {
-                        byteWriter.Write(piece.Id, 0, maxPieceId);
+                        byteWriter.Write(piece.Id, 0, eofId);
                         byteWriter.Write(rank, 0, 8);
                         byteWriter.Write(file, 0, 8);
                     }
                 }
             }
+            byteWriter.Write(eofId, 0, eofId);
+            var boardString = BytesToUrlFriendlyBase64(byteWriter.Bytes);
 
-            var bytes = byteWriter.Bytes;
-            var base64String = Convert.ToBase64String(bytes);
-            var urlFriendlyBase64 = base64String.Replace('+', '-').Replace('/', '_').TrimEnd('=');
-
-            return urlFriendlyBase64;
+            return $"c{boardString}";
         }
 
         public Board? Parse(IRuleset ruleset, string boardString)
         {
+            if (!boardString.StartsWith("c"))
+                return null;
 
             var orthodoxRuleset = ruleset as Ruleset;
             if (orthodoxRuleset == null)
                 return null;
             var maxPieceId = ruleset.Pieces.Max(piece => piece.Id);
+            var eofId = maxPieceId + 1;
             var maxPlayerId = ruleset.Players.Max(player => player.Id);
 
-            var base64String = boardString.Replace('-', '+').Replace('_', '/').PadRight(boardString.Length + (4 - boardString.Length % 4) % 4, '=');
-            var bytes = Convert.FromBase64String(base64String);
+            var bytes = UrlFriendlyBase64ToBytes(boardString.Substring(1));
             var byteReader = new PackedByteReader(bytes);
             var currentPlayerId = byteReader.Read(0, maxPlayerId);
             var currentPlayer = ruleset.Players.First(player => player.Id == currentPlayerId);
@@ -62,18 +63,36 @@ namespace ChessByUrl.Parser.Orthodox
                 squares[rank] = new Piece?[8];
             }
 
-            var pieceId = byteReader.Read(0, maxPieceId);
-            while (pieceId != null)
+            var pieceId = byteReader.Read(0, eofId);
+            while (pieceId != null && pieceId != eofId)
             {
                 var rank = byteReader.Read(0, 8)!.Value;
                 var file = byteReader.Read(0, 8)!.Value;
                 squares[rank][file] = ruleset.Pieces.First(piece => piece.Id == pieceId);
 
-                pieceId = byteReader.Read(0, maxPieceId);
+                pieceId = byteReader.Read(0, maxPieceId + 1);
             }
 
             return new Board(currentPlayer, new BoardRanks(squares.Select(rank => new BoardRank(rank)).ToArray()));
 
+        }
+
+        private static string BytesToUrlFriendlyBase64(byte[] bytes)
+        {
+            var base64 = Convert.ToBase64String(bytes);
+            return base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+        }
+
+        private static byte[] UrlFriendlyBase64ToBytes(string base64)
+        {
+            base64 = base64.Replace('-', '+').Replace('_', '/');
+            int paddingNeeded = 4 - (base64.Length % 4);
+            if (paddingNeeded < 4)
+            {
+                base64 = base64.PadRight(base64.Length + paddingNeeded, '=');
+            }
+            Convert.TryFromBase64Chars(base64, new Span<byte>(new byte[base64.Length]), out int bytesWritten);
+            return Convert.FromBase64String(base64);
         }
     }
 }

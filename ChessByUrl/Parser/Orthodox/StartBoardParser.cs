@@ -11,7 +11,7 @@ namespace ChessByUrl.Parser.Orthodox
         public string? Serialise(IRuleset ruleset, Board board)
         {
             if (ruleset is Ruleset)
-                return "d";
+                return "s";
             return null;
         }
 
@@ -19,7 +19,7 @@ namespace ChessByUrl.Parser.Orthodox
         {
             var orthodoxRuleset = ruleset as Ruleset;
 
-            if (orthodoxRuleset == null || boardString != "d") 
+            if (orthodoxRuleset == null || boardString != "s") 
                 return null;
 
             var ranks = new List<BoardRank>(8);

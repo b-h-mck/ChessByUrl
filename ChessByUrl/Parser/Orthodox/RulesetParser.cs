@@ -8,13 +8,13 @@ namespace ChessByUrl.Parser.Orthodox
         public string? Serialise(IRuleset ruleset)
         {
             if (ruleset is Ruleset)
-                return "s";
+                return "o";
             return null;
         }
 
         public IRuleset? Parse(string rulesetString)
         {
-            if (rulesetString == "s")
+            if (rulesetString == "o")
                 return new Ruleset();
             return null;
         }
