@@ -2,7 +2,7 @@
 {
     public class KnightBehaviour : IPieceBehaviour
     {
-        public IEnumerable<Move> GetLegalMoves(Board board, Coords from)
+        public IEnumerable<Move> GetLegalMoves(Ruleset ruleset, Board board, Coords from)
         {
             foreach (var direction in Directions)
             {
@@ -31,7 +31,7 @@
             new Coords(-1, -2)
         ];
 
-        public Board? TryApplySpecialMove(Board board, Move move)
+        public Board? TryApplySpecialMove(Ruleset ruleset, Board board, Move move)
         {
             return null;
         }

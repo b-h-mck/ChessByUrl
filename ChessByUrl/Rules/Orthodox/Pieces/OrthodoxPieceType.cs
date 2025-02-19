@@ -16,5 +16,7 @@
         RookWithCastlingRights,
         Queen,
         King
+
+        // TODO: Maybe we could add KingWhoJustCastled? That would help distinguish between moves and castles for certain Chess960 layouts.
     }
 }

@@ -3,7 +3,7 @@
     public class PawnBehaviour : IPieceBehaviour
     {
 
-        public IEnumerable<Move> GetLegalMoves(Board board, Coords from)
+        public IEnumerable<Move> GetLegalMoves(Ruleset ruleset, Board board, Coords from)
         {
             if (from.Rank < 1 || from.Rank > 6 || from.File < 0 || from.File > 7)
             {
@@ -105,7 +105,7 @@
             return move;
         }
 
-        public Board? TryApplySpecialMove(Board board, Move move)
+        public Board? TryApplySpecialMove(Ruleset ruleset, Board board, Move move)
         {
             if (move.ChangeTo != null) // Promotion or double move
             {

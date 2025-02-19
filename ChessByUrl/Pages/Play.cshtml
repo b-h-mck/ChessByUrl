@@ -32,3 +32,12 @@
     }
 </table>
 
+@if (Model.Board != null)
+{
+    <div>
+        <p>@Model.Board.CurrentPlayer.Name to move</p>
+        <p>@Model.GetCastlingRightsString(0)</p>
+        <p>@Model.GetCastlingRightsString(1)</p>
+        <p>@Model.GetEnPassantString()</p>
+    </div>
+}

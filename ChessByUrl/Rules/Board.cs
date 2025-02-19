@@ -45,6 +45,19 @@ namespace ChessByUrl.Rules
         {
             return new Board(player, Ranks);
         }
+
+        public IEnumerable<Coords> FindSquares(Predicate<Piece?> piecePredicate)
+        {
+            for (int rank = 0; rank < Ranks.Count; rank++)
+            {
+                for (int file = 0; file < Ranks[rank].Count; file++)
+                {
+                    var piece = Ranks[rank][file];
+                    if (piecePredicate(piece))
+                        yield return new Coords(rank, file);
+                }
+            }
+        }
     }
 
     public class BoardRanks : ReadOnlyCollection<BoardRank>

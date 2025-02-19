@@ -1,5 +1,6 @@
 using ChessByUrl.Parser;
 using ChessByUrl.Rules;
+using ChessByUrl.Rules.Orthodox.Pieces;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security;
@@ -8,8 +9,8 @@ namespace ChessByUrl.Pages
 {
     public class PlayModel : PageModel
     {
-        public IRuleset? Ruleset { get; set; } 
-        public Board? InitialBoard { get; set; } 
+        public IRuleset? Ruleset { get; set; }
+        public Board? InitialBoard { get; set; }
         public Board? Board { get; set; }
         public IEnumerable<Move>? MovesSoFar { get; set; }
 
@@ -60,6 +61,46 @@ namespace ChessByUrl.Pages
                     }
                 }
             }
+        }
+
+
+        public string GetCastlingRightsString(int playerId)
+        {
+            var player = Ruleset?.Players.FirstOrDefault(p => p.Id == playerId);
+            if (Board == null || player == null)
+            {
+                return "";
+            }
+            var rank = playerId == 0 ? 0 : 7;
+            var kingsideRook = Board.GetPiece(new Coords(rank, 7)) as OrthodoxPiece;
+            var queensideRook = Board.GetPiece(new Coords(rank, 0)) as OrthodoxPiece;
+
+
+            string castlingRights;
+            if (kingsideRook?.Type == OrthodoxPieceType.RookWithCastlingRights)
+            {
+                if (queensideRook?.Type == OrthodoxPieceType.RookWithCastlingRights)
+                    castlingRights = "full";
+                else
+                    castlingRights = "kingside";
+            }
+            else if (queensideRook?.Type == OrthodoxPieceType.RookWithCastlingRights)
+                castlingRights = "queenside";
+            else
+                castlingRights = "no";
+
+            return $"{player.Name} has {castlingRights} castling rights";
+        }
+
+        public string GetEnPassantString()
+        {
+            if (Board == null)
+            {
+                return "";
+            }
+            var enPassantTarget = Board.FindSquares(piece => 
+                (piece as OrthodoxPiece)?.Type == OrthodoxPieceType.PawnWhoJustMovedTwoSquares).FirstOrDefault();
+            return enPassantTarget == null ? "" : $"{enPassantTarget} is vulnerable to en passant";
         }
     }
 }

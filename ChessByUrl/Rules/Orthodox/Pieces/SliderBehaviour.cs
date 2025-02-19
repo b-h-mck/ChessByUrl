@@ -12,7 +12,7 @@ namespace ChessByUrl.Rules.Orthodox.Pieces
         public bool Orthogonal { get; private set; }
         public bool Diagonal { get; private set; }
 
-        public IEnumerable<Move> GetLegalMoves(Board board, Coords from)
+        public IEnumerable<Move> GetLegalMoves(Ruleset ruleset, Board board, Coords from)
         {
             var moves = new List<Move>();
             if (Orthogonal)
@@ -71,7 +71,7 @@ namespace ChessByUrl.Rules.Orthodox.Pieces
             }
         }
 
-        public Board? TryApplySpecialMove(Board board, Move move)
+        public Board? TryApplySpecialMove(Ruleset ruleset, Board board, Move move)
         {
             return null;
         }

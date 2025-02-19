@@ -2,9 +2,9 @@
 {
     public interface IPieceBehaviour
     {
-        IEnumerable<Move> GetLegalMoves(Board board, Coords from);
+        IEnumerable<Move> GetLegalMoves(Ruleset ruleset, Board board, Coords from);
 
 
-        Board? TryApplySpecialMove(Board board, Move move);
+        Board? TryApplySpecialMove(Ruleset ruleset, Board board, Move move);
     }
 }
