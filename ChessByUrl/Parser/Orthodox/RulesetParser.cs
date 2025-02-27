@@ -1,5 +1,5 @@
 ﻿using ChessByUrl.Rules;
-using ChessByUrl.Rules.Orthodox;
+using ChessByUrl.Rules.Rulesets.Orthodox;
 
 namespace ChessByUrl.Parser.Orthodox
 {
@@ -7,7 +7,7 @@ namespace ChessByUrl.Parser.Orthodox
     {
         public string? Serialise(IRuleset ruleset)
         {
-            if (ruleset is Ruleset)
+            if (ruleset is OrthodoxRuleset)
                 return "o";
             return null;
         }
@@ -15,7 +15,7 @@ namespace ChessByUrl.Parser.Orthodox
         public IRuleset? Parse(string rulesetString)
         {
             if (rulesetString == "o")
-                return new Ruleset();
+                return new OrthodoxRuleset();
             return null;
         }
 

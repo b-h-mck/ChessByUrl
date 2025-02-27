@@ -1,8 +1,17 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
+using System.Text;
 
 namespace ChessByUrl.Rules
 {
-    public class Board
+    /// <summary>
+    /// Represents the state of the board at a given point in time.
+    /// </summary>
+    /// <remarks>
+    /// This just contains the current player and the pieces on the board.
+    /// Other state (e.g. castling and en passant rights) is tracked with the pieces themselves.
+    /// </remarks>
+    public class Board : IEnumerable<(Coords, PieceType?)>
     {
         public Board(Player player, BoardRanks ranks)
         {
@@ -14,19 +23,19 @@ namespace ChessByUrl.Rules
 
         public BoardRanks Ranks { get; private set; }
 
-        public Piece? GetPiece(Coords coords)
+        public PieceType? GetPiece(Coords coords)
         {
             return Ranks[coords.Rank][coords.File];
         }
 
-        public Board ReplacePiece(Coords coords, Piece? newPiece)
+        public Board ReplacePiece(Coords coords, PieceType? newPiece)
         {
             List<BoardRank> newRanks = new List<BoardRank>(Ranks.Count);
             for (int rank = 0; rank < Ranks.Count; rank++)
             {
                 if (rank == coords.Rank)
                 {
-                    List<Piece?> newRank = new List<Piece?>(Ranks[rank].Count);
+                    List<PieceType?> newRank = new List<PieceType?>(Ranks[rank].Count);
                     for (int file = 0; file < Ranks[rank].Count; file++)
                     {
                         newRank.Add(file == coords.File ? newPiece : Ranks[rank][file]);
@@ -46,7 +55,7 @@ namespace ChessByUrl.Rules
             return new Board(player, Ranks);
         }
 
-        public IEnumerable<Coords> FindSquares(Predicate<Piece?> piecePredicate)
+        public IEnumerable<Coords> FindSquares(Predicate<PieceType?> piecePredicate)
         {
             for (int rank = 0; rank < Ranks.Count; rank++)
             {
@@ -58,6 +67,42 @@ namespace ChessByUrl.Rules
                 }
             }
         }
+
+        public IEnumerator<(Coords, PieceType?)> GetEnumerator()
+        {
+            for (int rank = 0; rank < Ranks.Count; rank++)
+            {
+                for (int file = 0; file < Ranks[rank].Count; file++)
+                {
+                    var piece = Ranks[rank][file];
+                    if (piece != null)
+                    {
+                        yield return (new Coords(rank, file), piece);
+                    }
+                }
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public string ToPieceString()
+        {
+            var sb = new StringBuilder();
+            for (int rank = 0; rank < Ranks.Count; rank++)
+            {
+                for (int file = 0; file < Ranks[rank].Count; file++)
+                {
+                    var piece = Ranks[rank][file];
+                    sb.Append(piece?.Unicode ?? ".");
+                }
+                sb.AppendLine();
+            }
+            return sb.ToString();
+        }
+
     }
 
     public class BoardRanks : ReadOnlyCollection<BoardRank>
@@ -67,9 +112,9 @@ namespace ChessByUrl.Rules
         }
     }
 
-    public class BoardRank : ReadOnlyCollection<Piece?>
+    public class BoardRank : ReadOnlyCollection<PieceType?>
     {
-        public BoardRank(IList<Piece?> list) : base(list)
+        public BoardRank(IList<PieceType?> list) : base(list)
         {
         }
     }

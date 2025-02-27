@@ -1,6 +1,5 @@
 ﻿using ChessByUrl.Rules;
-using ChessByUrl.Rules.Orthodox;
-using ChessByUrl.Rules.Orthodox.Pieces;
+using ChessByUrl.Rules.Rulesets.Orthodox;
 using ChessByUrl.Utils;
 
 namespace ChessByUrl.Parser.Orthodox
@@ -11,10 +10,10 @@ namespace ChessByUrl.Parser.Orthodox
 
         public string? Serialise(IRuleset ruleset, Board board)
         {
-            var orthodoxRuleset = ruleset as Ruleset;
+            var orthodoxRuleset = ruleset as OrthodoxRuleset;
             if (orthodoxRuleset == null)
                 return null;
-            var maxPieceId = ruleset.Pieces.Max(piece => piece.Id);
+            var maxPieceId = ruleset.PieceTypes.Max(piece => piece.Id);
             var eofId = maxPieceId + 1;
             var maxPlayerId = ruleset.Players.Max(player => player.Id);
 
@@ -25,7 +24,7 @@ namespace ChessByUrl.Parser.Orthodox
             {
                 for (var file = 0; file < 8; file++)
                 {
-                    var piece = board.GetPiece(new Coords(rank, file)) as OrthodoxPiece;
+                    var piece = board.GetPiece(new Coords(rank, file));
                     if (piece != null)
                     {
                         byteWriter.Write(piece.Id, 0, eofId);
@@ -45,10 +44,10 @@ namespace ChessByUrl.Parser.Orthodox
             if (!boardString.StartsWith("c"))
                 return null;
 
-            var orthodoxRuleset = ruleset as Ruleset;
+            var orthodoxRuleset = ruleset as OrthodoxRuleset;
             if (orthodoxRuleset == null)
                 return null;
-            var maxPieceId = ruleset.Pieces.Max(piece => piece.Id);
+            var maxPieceId = ruleset.PieceTypes.Max(piece => piece.Id);
             var eofId = maxPieceId + 1;
             var maxPlayerId = ruleset.Players.Max(player => player.Id);
 
@@ -57,10 +56,10 @@ namespace ChessByUrl.Parser.Orthodox
             var currentPlayerId = byteReader.Read(0, maxPlayerId);
             var currentPlayer = ruleset.Players.First(player => player.Id == currentPlayerId);
 
-            Piece?[][] squares = new Piece?[8][];
+            PieceType?[][] squares = new PieceType?[8][];
             for (int rank = 0; rank < squares.Length; rank++)
             {
-                squares[rank] = new Piece?[8];
+                squares[rank] = new PieceType?[8];
             }
 
             var pieceId = byteReader.Read(0, eofId);
@@ -68,7 +67,7 @@ namespace ChessByUrl.Parser.Orthodox
             {
                 var rank = byteReader.Read(0, 8)!.Value;
                 var file = byteReader.Read(0, 8)!.Value;
-                squares[rank][file] = ruleset.Pieces.First(piece => piece.Id == pieceId);
+                squares[rank][file] = ruleset.PieceTypes.First(piece => piece.Id == pieceId);
 
                 pieceId = byteReader.Read(0, maxPieceId + 1);
             }

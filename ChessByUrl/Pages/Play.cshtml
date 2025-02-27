@@ -7,9 +7,18 @@
 <table class="board showMoveFrom">
     @if (Model.Board != null && Model.LegalMoves != null)
     {
+        <tr>
+            <th class="coordLabel" />
+            @for (int file = 0; file < Model.Board.Ranks[0].Count; file++)
+            {
+                <th class="coordLabel">@(new string((char)('A' + file), 1))</th>
+            }
+            <th class="coordLabel" />
+        </tr>
         for (int rank = Model.Board.Ranks.Count - 1; rank >= 0; rank--)
         {
             <tr>
+                <th class="coordLabel">@(rank + 1)</th>
                 @for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
                 {
                     var coords = new Coords(rank, file);
@@ -27,17 +36,51 @@
                         }
                     </td>
                 }
+                <th class="coordLabel">@(rank + 1)</th>
             </tr>
         }
+        <tr>
+            <th class="coordLabel" />
+            @for (int file = 0; file < Model.Board.Ranks[0].Count; file++)
+            {
+                <th class="coordLabel">@(new string((char)('A' + file), 1))</th>
+            }
+            <th class="coordLabel" />
+        </tr>
     }
 </table>
 
-@if (Model.Board != null)
+@if (Model.Board != null && Model.Ruleset != null)
 {
-    <div>
-        <p>@Model.Board.CurrentPlayer.Name to move</p>
-        <p>@Model.GetCastlingRightsString(0)</p>
-        <p>@Model.GetCastlingRightsString(1)</p>
-        <p>@Model.GetEnPassantString()</p>
-    </div>
+    var status = Model.Ruleset.GetGameStatus(Model.Board);
+    if (status != null)
+    {
+        if (status.IsFinished)
+        {
+            <div>Game Over!</div>
+            @if (status.PlayerPoints != null)
+            {
+                var pointStrings = status.PlayerPoints.OrderBy(p => p.player.Id).Select(p => p.points == 0.5m ? "1/2" : p.points.ToString()).ToArray();
+                <div>Points: @string.Join(" - ", pointStrings)</div>
+            }
+        }
+        <div>
+            @if (status.StatusStrings != null)
+            {
+                
+                foreach ((Player? player, string statusString) in status.StatusStrings)
+                {
+                    if (player == null)
+                    {
+                        <div>@char.ToUpper(statusString[0]) + statusString.Substring(1).</div>
+                    }
+                    else
+                    {
+                        <div>@($"{player.Name} {statusString}.")</div>
+                    }
+                }
+            }
+        </div>
+
+    }
 }

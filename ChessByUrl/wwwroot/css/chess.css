@@ -1,9 +1,12 @@
 ﻿.board {
     border-collapse: collapse;
     width: 100%;
-    max-width: 800px; /* Adjust as needed for larger screens */
+    max-width: 600px; /* Adjust as needed for larger screens */
     margin: auto;
 }
+    .board .coordLabel {
+        text-align: center;
+    }
 
     .board .square {
         width: calc(100% / 8); /* Assuming an 8x8 board */

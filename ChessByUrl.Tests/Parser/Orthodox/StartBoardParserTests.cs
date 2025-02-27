@@ -1,13 +1,11 @@
 ﻿using ChessByUrl.Parser.Orthodox;
-using OrthodoxRuleset = ChessByUrl.Rules.Orthodox.Ruleset;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ChessByUrl.Rules;
-using ChessByUrl.Rules.Orthodox.Pieces;
-
+using ChessByUrl.Rules.Rulesets.Orthodox;
 namespace ChessByUrl.Tests.Parser.Orthodox
 {
     [TestClass]
@@ -19,7 +17,7 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         {
             var parser = new StartBoardParser();
             var ruleset = new OtherRuleset();
-            var board = new Board(new Player { Id = 0, Name = "White" }, new BoardRanks(new List<BoardRank>()));
+            var board = new Board(new Player { Id = 0, Name = "White", ClosestRank=0, FarthestRank=0 }, new BoardRanks(new List<BoardRank>()));
             var result = parser.Serialise(ruleset, board);
             Assert.IsNull(result);
         }
@@ -45,11 +43,17 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         private class OtherRuleset : IRuleset
         {
             public IEnumerable<Player> Players => throw new NotImplementedException();
-            public IEnumerable<Piece> Pieces => throw new NotImplementedException();
+            public IEnumerable<PieceType> PieceTypes => throw new NotImplementedException();
             public Board ApplyMove(Board board, Move move)
             {
                 throw new NotImplementedException();
             }
+
+            public GameStatus GetGameStatus(Board board)
+            {
+                throw new NotImplementedException();
+            }
+
             public IEnumerable<Move> GetLegalMoves(Board board, Coords from)
             {
                 throw new NotImplementedException();
@@ -63,11 +67,22 @@ namespace ChessByUrl.Tests.Parser.Orthodox
 
 
         [TestMethod]
-        public void Serialise_OrthodoxRuleset_ReturnsCorrectString()
+        public void Serialise_NonStartBoard_ReturnsNull()
         {
             var parser = new StartBoardParser();
             var ruleset = new OrthodoxRuleset();
             var board = new Board(ruleset.Players.First(), new BoardRanks(new List<BoardRank>()));
+            var result = parser.Serialise(ruleset, board);
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void Serialise_StartBoard_ReturnsCorrectString()
+        {
+            var parser = new StartBoardParser();
+            var ruleset = new OrthodoxRuleset();
+            var board = parser.Parse(ruleset, "s");
+            Assert.IsNotNull(board);
             var result = parser.Serialise(ruleset, board);
             Assert.AreEqual("s", result);
         }
@@ -92,21 +107,22 @@ namespace ChessByUrl.Tests.Parser.Orthodox
 
         private void AssertBackRank(Board board, int playerId, int rank)
         {
-            AssertPiece(OrthodoxPieceType.RookWithCastlingRights, playerId, board, rank, 0);
-            AssertPiece(OrthodoxPieceType.Knight, playerId, board, rank, 1);
-            AssertPiece(OrthodoxPieceType.Bishop, playerId, board, rank, 2);
-            AssertPiece(OrthodoxPieceType.Queen, playerId, board, rank, 3);
-            AssertPiece(OrthodoxPieceType.King, playerId, board, rank, 4);
-            AssertPiece(OrthodoxPieceType.Bishop, playerId, board, rank, 5);
-            AssertPiece(OrthodoxPieceType.Knight, playerId, board, rank, 6);
-            AssertPiece(OrthodoxPieceType.RookWithCastlingRights, playerId, board, rank, 7);
+            var pieceSet = OrthodoxPieceTypes.Player(playerId);
+            AssertPiece(pieceSet.RookWithCastlingRights, board, rank, 0);
+            AssertPiece(pieceSet.Knight, board, rank, 1);
+            AssertPiece(pieceSet.Bishop, board, rank, 2);
+            AssertPiece(pieceSet.Queen, board, rank, 3);
+            AssertPiece(pieceSet.King, board, rank, 4);
+            AssertPiece(pieceSet.Bishop, board, rank, 5);
+            AssertPiece(pieceSet.Knight, board, rank, 6);
+            AssertPiece(pieceSet.RookWithCastlingRights, board, rank, 7);
         }
 
         private void AssertPawnRank(Board board, int playerId, int rank)
         {
             for (int file = 0; file < 8; file++)
             {
-                AssertPiece(OrthodoxPieceType.Pawn, playerId, board, rank, file);
+                AssertPiece(OrthodoxPieceTypes.Player(playerId).Pawn, board, rank, file);
             }
         }
 
@@ -118,12 +134,11 @@ namespace ChessByUrl.Tests.Parser.Orthodox
             }
         }
 
-        private void AssertPiece(OrthodoxPieceType expectedType, int expectedPlayerId, Board board, int rank, int file)
+        private void AssertPiece(PieceType expectedPieceType, Board board, int rank, int file)
         {
-            var piece = board.GetPiece(new Coords(rank, file)) as OrthodoxPiece;
-            Assert.IsNotNull(piece);
-            Assert.AreEqual(expectedType, piece.Type);
-            Assert.AreEqual(expectedPlayerId, piece.Player.Id);
+            var pieceType = board.GetPiece(new Coords(rank, file)) as PieceType;
+            Assert.IsNotNull(pieceType);
+            Assert.AreEqual(expectedPieceType.Id, pieceType.Id);
         }
     }
 }

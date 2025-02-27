@@ -1,13 +1,12 @@
 ﻿using ChessByUrl.Parser.Orthodox;
-using OrthodoxRuleset = ChessByUrl.Rules.Orthodox.Ruleset;
 using ChessByUrl.Rules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ChessByUrl.Rules.Orthodox.Pieces;
 using System.Data;
+using ChessByUrl.Rules.Rulesets.Orthodox;
 
 namespace ChessByUrl.Tests.Parser.Orthodox
 {
@@ -20,7 +19,7 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         {
             var parser = new CustomBoardParser();
             var ruleset = new OtherRuleset();
-            var board = new Board(new Player { Id = 0, Name = "White" }, new BoardRanks(new List<BoardRank>()));
+            var board = new Board(new Player { Id = 0, Name = "White", ClosestRank=0, FarthestRank=8 }, new BoardRanks(new List<BoardRank>()));
             var result = parser.Serialise(ruleset, board);
             Assert.IsNull(result);
         }
@@ -46,11 +45,17 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         private class OtherRuleset : IRuleset
         {
             public IEnumerable<Player> Players => throw new NotImplementedException();
-            public IEnumerable<Piece> Pieces => throw new NotImplementedException();
+            public IEnumerable<PieceType> PieceTypes => throw new NotImplementedException();
             public Board ApplyMove(Board board, Move move)
             {
                 throw new NotImplementedException();
             }
+
+            public GameStatus GetGameStatus(Board board)
+            {
+                throw new NotImplementedException();
+            }
+
             public IEnumerable<Move> GetLegalMoves(Board board, Coords from)
             {
                 throw new NotImplementedException();
@@ -79,39 +84,39 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         }
 
         [TestMethod]
-        [DataRow(0, 0, OrthodoxPieceType.Pawn, 3, 0, "cAIMA")]
-        [DataRow(0, 0, OrthodoxPieceType.PawnWhoJustMovedTwoSquares, 3, 0, "cAoMA")]
-        [DataRow(0, 0, OrthodoxPieceType.RookWithCastlingRights, 6, 7, "cSp4A")]
-        [DataRow(0, 1, OrthodoxPieceType.Bishop, 3, 3, "cFo8A")]
-        [DataRow(0, 1, OrthodoxPieceType.King, 7, 7, "cXp8A")]
-        [DataRow(0, 1, OrthodoxPieceType.Pawn, 3, 0, "cEIMA")]
-        [DataRow(0, 1, OrthodoxPieceType.Rook, 6, 7, "cWJ4A")]
-        public void Serialise_SinglePiece(int currentPlayerId, int piecePlayerId, OrthodoxPieceType pieceType, int rank, int file, string expectedBase64)
+        [DataRow(1, 0, PieceIds.White.Pawn, 3, 0, "cDIMA")]
+        [DataRow(2, 0, PieceIds.White.PawnVulnerableToEnPassant, 3, 0, "cDoMA")]
+        [DataRow(3, 0, PieceIds.Black.RookWithCastlingRights, 6, 7, "cVp4A")]
+        [DataRow(4, 0, PieceIds.Black.Bishop, 3, 3, "cGI8A")]
+        [DataRow(5, 1, PieceIds.White.King, 7, 7, "cQZ8A")]
+        [DataRow(6, 1, PieceIds.White.Pawn, 3, 0, "cDYMA")]
+        [DataRow(7, 1, PieceIds.Black.Rook, 6, 7, "cVZ4A")]
+        public void Serialise_SinglePiece(int _, int currentPlayerId, int pieceTypeId, int rank, int file, string expectedBase64)
         {
             var parser = new CustomBoardParser();
             var ruleset = new OrthodoxRuleset();
-            var board = PrepareBoard(ruleset, currentPlayerId, [(piecePlayerId, pieceType, new Coords(rank, file))]);
+            var board = PrepareBoard(ruleset, currentPlayerId, [(pieceTypeId, new Coords(rank, file))]);
             var result = parser.Serialise(ruleset, board);
             Assert.AreEqual(expectedBase64, result);
         }
 
         [TestMethod]
-        [DataRow(0, 0, OrthodoxPieceType.Knight, "cBAACESACBkIIKAIWYAUBChEhAgdGCCkSFmIFAhIRIiIGSggqIhZkBQMaESMiB04IKzIWZkUAIhEkQgZSCCxCFmhFASoRJUIHVggtUhZqRQIyESZiBloILmIWbEUDOhEnYgdeCC9yFm4h")]
-        [DataRow(0, 0, OrthodoxPieceType.Pawn, "cAAAAASAABkAAKAAGYAEBCAEhAAdEACkQBmIBAhABIiAGSAAqIAZkAQMYASMgB0wAKzAGZkEAIAEkQAZQACxABmhBASgBJUAHVAAtUAZqQQIwASZgBlgALmAGbEEDOAEnYAdcAC9wBm4h")]
-        [DataRow(0, 0, OrthodoxPieceType.PawnWhoJustMovedTwoSquares, "cAgABCSABBkEEKAEGYQMBCQkhAQdFBCkRBmMDAhEJIiEGSQQqIQZlAwMZCSMhB00EKzEGZ0MAIQkkQQZRBCxBBmlDASkJJUEHVQQtUQZrQwIxCSZhBlkELmEGbUMDOQknYQddBC9xBm8h")]
-        [DataRow(0, 1, OrthodoxPieceType.King, "cHkAHeSAPZkM8KA92YR9BD3khD2dHPCkfdmMfQhd5Ii9mSzwqL3ZlH0MfeSMvZ088Kz92Z19AJ3kkT2ZTPCxPdmlfQS95JU9nVzwtX3ZrX0I3eSZvZls8Lm92bV9DP3knb2dfPC9_dm8h")]
-        [DataRow(0, 1, OrthodoxPieceType.Queen, "cHEAGcSAOZkI4KA52YB1BDnEhDmdGOCkedmIdQhZxIi5mSjgqLnZkHUMecSMuZ044Kz52Zl1AJnEkTmZSOCxOdmhdQS5xJU5nVjgtXnZqXUI2cSZuZlo4Lm52bF1DPnEnbmdeOC9-dm4h")]
-        [DataRow(0, 1, OrthodoxPieceType.RookWithCastlingRights, "cGkAFaSANZkE0KA1mYRtBDWkhDWdFNCkdZmMbQhVpIi1mSTQqLWZlG0MdaSMtZ000Kz1mZ1tAJWkkTWZRNCxNZmlbQS1pJU1nVTQtXWZrW0I1aSZtZlk0Lm1mbVtDPWknbWddNC99Zm8h")]
-        public void Serialise_SamePieceOnEverySquare(int currentPlayerId, int piecePlayerId, OrthodoxPieceType pieceType, string expectedBase64)
+        [DataRow(1, 0, PieceIds.White.Knight, "cCgAFKSAFJkEUKAUmYQsBDSkhBSdFFCkVJmMLAhUpIiUmSRQqJSZlCwMdKSMlJ00UKzUmZ0sAJSkkRSZRFCxFJmlLAS0pJUUnVRQtVSZrSwI1KSZlJlkULmUmbUsDPSknZSddFC91Jm8h")]
+        [DataRow(2, 0, PieceIds.Black.Pawn, "cHEAGcSAOZkI4KA52YB1BDnEhDmdGOCkedmIdQhZxIi5mSjgqLnZkHUMecSMuZ044Kz52Zl1AJnEkTmZSOCxOdmhdQS5xJU5nVjgtXnZqXUI2cSZuZlo4Lm52bF1DPnEnbmdeOC9-dm4h")]
+        [DataRow(3, 0, PieceIds.White.PawnVulnerableToEnPassant, "cDgAHOSAHJkMcKAc2YQ8BDzkhBydHHCkXNmMPAhc5IicmSxwqJzZlDwMfOSMnJ08cKzc2Z08AJzkkRyZTHCxHNmlPAS85JUcnVxwtVzZrTwI3OSZnJlscLmc2bU8DPzknZydfHC93Nm8h")]
+        [DataRow(4, 1, PieceIds.Black.King, "cEUAAQSAIRkAgKAhGYBFBCEEhCEdEICkYRmIRQhBBIihGSCAqKEZkEUMYQSMoR0wgKzhGZlFAIEEkSEZQICxIRmhRQShBJUhHVCAtWEZqUUIwQSZoRlggLmhGbFFDOEEnaEdcIC94Rm4h")]
+        [DataRow(5, 1, PieceIds.White.Queen, "cAwABCSABBkEEKAEGYQMBCQkhAQdFBCkRBmMDAhEJIiEGSQQqIQZlAwMZCSMhB00EKzEGZ0MAIQkkQQZRBCxBBmlDASkJJUEHVQQtUQZrQwIxCSZhBlkELmEGbUMDOQknYQddBC9xBm8h")]
+        [DataRow(6, 1, PieceIds.Black.RookWithCastlingRights, "cF0ADWSALRkMsKAtWYRdBC1khC0dHLCkbVmMXQhNZIitGSywqK1ZlF0MbWSMrR08sKztWZ1dAI1kkS0ZTLCxLVmlXQStZJUtHVywtW1ZrV0IzWSZrRlssLmtWbVdDO1kna0dfLC97Vm8h")]
+        public void Serialise_SamePieceOnEverySquare(int _, int currentPlayerId, int pieceTypeId, string expectedBase64)
         {
             var parser = new CustomBoardParser();
             var ruleset = new OrthodoxRuleset();
-            var pieces = new List<(int PlayerId, OrthodoxPieceType PieceType, Coords Coords)>();
+            var pieces = new List<(int pieceTypeId, Coords Coords)>();
             for (int rank = 0; rank < 8; rank++)
             {
                 for (int file = 0; file < 8; file++)
                 {
-                    pieces.Add((piecePlayerId, pieceType, new Coords(rank, file)));
+                    pieces.Add((pieceTypeId, new Coords(rank, file)));
                 }
             }
             var board = PrepareBoard(ruleset, currentPlayerId, pieces);
@@ -129,29 +134,10 @@ namespace ChessByUrl.Tests.Parser.Orthodox
             var startBoard = startParser.Parse(ruleset, "s");
 
             var result = parser.Serialise(ruleset, startBoard!);
-            Assert.AreEqual($"cCgACGSAGJkMMKAImYQEBCAEhAAdEACkQBmJRQjBBJmhGWCAuaEZsW0M6WSduZ18sL3pmbyE", result);
+            Assert.AreEqual($"cBgAFISABBkAQKAUWYQ0BDjEhBidGGCkWNmJdQjZxJm5mWjgubnZsV0M9YSdpR1wwL31WbyE", result);
         }
 
 
-        private Board PrepareBoard(OrthodoxRuleset ruleset, int currentPlayer, List<(int PlayerId, OrthodoxPieceType PieceType, Coords Coords)>? pieces = null)
-        {
-            var squares = new Piece?[8][];
-            for (int i = 0; i < 8; i++)
-            {
-                squares[i] = new Piece?[8];
-            }
-            if (pieces != null)
-            {
-                foreach (var (playerId, pieceType, coords) in pieces)
-                {
-                    squares[coords.Rank][coords.File] = ruleset.GetOrthodoxPiece(pieceType, playerId);
-                }
-            }
-
-            var ranks = new BoardRanks(squares.Select((rank) => new BoardRank(rank)).ToList());
-            var board = new Board(ruleset.Players.First(p => p.Id == currentPlayer), ranks);
-            return board;
-        }
 
 
         [TestMethod]
@@ -175,23 +161,23 @@ namespace ChessByUrl.Tests.Parser.Orthodox
             var parser = new CustomBoardParser();
             var ruleset = new OrthodoxRuleset();
 
-            var pieces = new List<(int PlayerId, OrthodoxPieceType PieceType, Coords Coords)> {
-                (0, OrthodoxPieceType.King, new Coords(0, 4)),
-                (0, OrthodoxPieceType.Queen, new Coords(3, 6)),
-                (0, OrthodoxPieceType.Knight, new Coords(3, 7)),
-                (0, OrthodoxPieceType.Pawn, new Coords(4, 1)),
-                (0, OrthodoxPieceType.Pawn, new Coords(5, 2)),
-                (0, OrthodoxPieceType.Pawn, new Coords(4, 3)),
-                (0, OrthodoxPieceType.Rook, new Coords(7, 6)),
-                (0, OrthodoxPieceType.RookWithCastlingRights, new Coords(0, 7)),
+            var pieces = new List<(int PieceTypeId, Coords Coords)> {
+                (PieceIds.White.King, new Coords(0, 4)),
+                (PieceIds.White.Queen, new Coords(3, 6)),
+                (PieceIds.White.Knight, new Coords(3, 7)),
+                (PieceIds.White.Pawn, new Coords(4, 1)),
+                (PieceIds.White.Pawn, new Coords(5, 2)),
+                (PieceIds.White.Pawn, new Coords(4, 3)),
+                (PieceIds.White.Rook, new Coords(7, 6)),
+                (PieceIds.White.RookWithCastlingRights, new Coords(0, 7)),
 
-                (1, OrthodoxPieceType.King, new Coords(7, 7)),
-                (1, OrthodoxPieceType.Queen, new Coords(7, 0)),
-                (1, OrthodoxPieceType.Knight, new Coords(2, 7)),
-                (1, OrthodoxPieceType.PawnWhoJustMovedTwoSquares, new Coords(4, 6)),
-                (1, OrthodoxPieceType.Pawn, new Coords(4, 7)),
-                (1, OrthodoxPieceType.Bishop, new Coords(4, 3)),
-                (1, OrthodoxPieceType.Rook, new Coords(6, 0)),
+                (PieceIds.Black.King, new Coords(7, 7)),
+                (PieceIds.Black.Queen, new Coords(7, 0)),
+                (PieceIds.Black.Knight, new Coords(2, 7)),
+                (PieceIds.Black.PawnVulnerableToEnPassant, new Coords(4, 6)),
+                (PieceIds.Black.Pawn, new Coords(4, 7)),
+                (PieceIds.Black.Bishop, new Coords(4, 3)),
+                (PieceIds.Black.Rook, new Coords(6, 0)),
             };
             var board = PrepareBoard(ruleset, 1, pieces);
 
@@ -212,6 +198,29 @@ namespace ChessByUrl.Tests.Parser.Orthodox
                 }
             }
 
+        }
+
+
+
+
+        private Board PrepareBoard(OrthodoxRuleset ruleset, int currentPlayer, List<(int pieceTypeId, Coords Coords)>? pieces = null)
+        {
+            var squares = new PieceType?[8][];
+            for (int i = 0; i < 8; i++)
+            {
+                squares[i] = new PieceType?[8];
+            }
+            if (pieces != null)
+            {
+                foreach (var (pieceTypeId, coords) in pieces)
+                {
+                    squares[coords.Rank][coords.File] = ruleset.PieceTypes.First(p => p.Id == pieceTypeId);
+                }
+            }
+
+            var ranks = new BoardRanks(squares.Select((rank) => new BoardRank(rank)).ToList());
+            var board = new Board(ruleset.Players.First(p => p.Id == currentPlayer), ranks);
+            return board;
         }
     }
 }
