@@ -1,31 +1,66 @@
-html {
-  font-size: 14px;
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+.panel-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+.main-panel {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 0;
+    min-width: 0;
+    position: relative;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+.widget-panel {
+    flex: 0 0 200px;
+    min-height: 200px;
+    min-width: 200px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
 }
 
-body {
-  margin-bottom: 60px;
+/* Wide screen */
+@media (min-aspect-ratio: 1/1) {
+    .panel-container {
+        flex-direction: row;
+    }
+
+    .main-panel {
+        height: 100%;
+    }
+
+    .widget-panel {
+        height: 100%;
+        flex-direction: column; /* List widgets top-to-bottom */
+    }
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
-}
+/* Tall screen */
+@media (max-aspect-ratio: 1/1) {
+    .panel-container {
+        flex-direction: column;
+    }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+    .main-panel {
+        width: 100%;
+    }
+
+    .widget-panel {
+        width: 100%;
+        flex-direction: row; /* List widgets horizontally */
+    }
 }

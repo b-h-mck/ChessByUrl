@@ -3,84 +3,72 @@
 @using ChessByUrl.Rules
 @model PlayModel
 
+@section WidgetPanel
+{
+    <div id="promotion-selector" class="widget">
+    </div>
+    <div class="widget">
+    @if (Model.Board != null && Model.Ruleset != null)
+    {
+        var status = Model.Ruleset.GetGameStatus(Model.Board);
+        if (status != null)
+        {
+            if (status.IsFinished)
+            {
+                <div>Game Over!</div>
+                @if (status.PlayerPoints != null)
+                {
+                    var pointStrings = status.PlayerPoints.OrderBy(p => p.player.Id).Select(p => p.points == 0.5m ? "1/2" : p.points.ToString()).ToArray();
+                    <div>Points: @string.Join(" - ", pointStrings)</div>
+                }
+            }
+            <div>
+                @if (status.StatusStrings != null)
+                {
+                    foreach ((Player? player, string statusString) in status.StatusStrings)
+                    {
+                        if (player == null)
+                        {
+                            <div>@char.ToUpper(statusString[0]) + statusString.Substring(1).</div>
+                        }
+                        else
+                        {
+                            <div>@($"{player.Name} {statusString}.")</div>
+                        }
+                    }
+                }
+            </div>
+        }
+    }
+    </div>
+}
 
-<table class="board showMoveFrom">
+<div class="board-wrapper">
     @if (Model.Board != null && Model.LegalMoves != null)
     {
-        <tr>
-            <th class="coordLabel" />
-            @for (int file = 0; file < Model.Board.Ranks[0].Count; file++)
-            {
-                <th class="coordLabel">@(new string((char)('A' + file), 1))</th>
-            }
-            <th class="coordLabel" />
-        </tr>
-        for (int rank = Model.Board.Ranks.Count - 1; rank >= 0; rank--)
+        <table class="board showMoveFrom">
+        @for (int rank = Model.Board.Ranks.Count - 1; rank >= 0; rank--)
         {
             <tr>
-                <th class="coordLabel">@(rank + 1)</th>
-                @for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
-                {
-                    var coords = new Coords(rank, file);
-                    var piece = Model.Board.Ranks[rank][file];
-                    var legalMoves = Model.LegalMoves[rank][file];
+            @for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
+            {
+                var coords = new Coords(rank, file);
+                var piece = Model.Board.Ranks[rank][file];
+                var legalMoves = Model.LegalMoves[rank][file];
 
-                    var squareClass = "square";
-                    squareClass += (rank + file) % 2 == 0 ? " light" : " dark";
-                    squareClass += (legalMoves == null) ? "" : " moveFrom";
+                var squareClass = "square";
+                squareClass += (rank + file) % 2 == 0 ? " light" : " dark";
+                squareClass += (legalMoves == null) ? "" : " moveFrom";
 
-                    <td class="@squareClass" onclick="onSquareClick(this)" data-coords=@JsonSerializer.Serialize(coords) data-legalmoves="@JsonSerializer.Serialize(legalMoves)">
-                        @if (piece != null)
-                        {
-                            <span>@piece.Unicode</span>
-                        }
-                    </td>
-                }
-                <th class="coordLabel">@(rank + 1)</th>
+                <td class="@squareClass" onclick="onSquareClick(this)" data-coords=@JsonSerializer.Serialize(coords) data-legalmoves="@JsonSerializer.Serialize(legalMoves)">
+                    @if (piece != null)
+                    {
+                        <img src="/images/@piece.SvgFileName" alt="@piece.Name" />
+                    }
+                </td>
+            }
             </tr>
         }
-        <tr>
-            <th class="coordLabel" />
-            @for (int file = 0; file < Model.Board.Ranks[0].Count; file++)
-            {
-                <th class="coordLabel">@(new string((char)('A' + file), 1))</th>
-            }
-            <th class="coordLabel" />
-        </tr>
+        </table>
     }
-</table>
-
-@if (Model.Board != null && Model.Ruleset != null)
-{
-    var status = Model.Ruleset.GetGameStatus(Model.Board);
-    if (status != null)
-    {
-        if (status.IsFinished)
-        {
-            <div>Game Over!</div>
-            @if (status.PlayerPoints != null)
-            {
-                var pointStrings = status.PlayerPoints.OrderBy(p => p.player.Id).Select(p => p.points == 0.5m ? "1/2" : p.points.ToString()).ToArray();
-                <div>Points: @string.Join(" - ", pointStrings)</div>
-            }
-        }
-        <div>
-            @if (status.StatusStrings != null)
-            {
-                
-                foreach ((Player? player, string statusString) in status.StatusStrings)
-                {
-                    if (player == null)
-                    {
-                        <div>@char.ToUpper(statusString[0]) + statusString.Substring(1).</div>
-                    }
-                    else
-                    {
-                        <div>@($"{player.Name} {statusString}.")</div>
-                    }
-                }
-            }
-        </div>
-
-    }
-}
+</div>

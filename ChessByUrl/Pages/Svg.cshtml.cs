@@ -13,10 +13,10 @@ namespace ChessByUrl.Pages
 
         public void OnGet(string? ruleset, string? state, string? moves)
         {
-            //var parsers = ParserCollection.Instance;
-            //Ruleset = parsers.ParseRuleset(ruleset ?? "");
-            //Board = Ruleset != null ? parsers.ParseBoard(Ruleset, state ?? "") : null;
-            //Moves = Ruleset != null && Board != null ? parsers.ParseMoves(Ruleset, Board, moves ?? "") : null;
+            var parsers = ParserCollection.Instance;
+            Ruleset = parsers.ParseRuleset(ruleset ?? "");
+            Board = Ruleset != null ? parsers.ParseBoard(Ruleset, state ?? "") : null;
+            Moves = Ruleset != null && Board != null ? parsers.ParseMoves(Ruleset, Board, moves ?? "") : null;
         }
     }
 }

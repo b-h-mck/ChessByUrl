@@ -82,6 +82,7 @@ namespace ChessByUrl.Tests.Rules
                 Name = "Test",
                 Description = "Test",
                 Unicode = "T",
+                SvgFileName = "test.svg",
                 Behaviours = behaviours
             };
             Ruleset.PieceTypeList.Add(result);

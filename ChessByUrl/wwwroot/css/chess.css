@@ -1,30 +1,77 @@
-﻿.board {
-    border-collapse: collapse;
+﻿.board-wrapper {
     width: 100%;
-    max-width: 600px; /* Adjust as needed for larger screens */
-    margin: auto;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-    .board .coordLabel {
-        text-align: center;
+
+.board {
+    display: table;
+    border: 1px solid black;
+    table-layout: fixed;
+    aspect-ratio: 1 / 1;
+}
+
+
+/* Wide screen */
+@media (min-aspect-ratio: 1/1) {
+    .board {
+        /* width: 95vh;*/
+        width: calc(95vw - 210px);
+        max-width: 95vh;
+        /*height: 95%;*/
+    }
+}
+
+/* Tall screen */
+@media (max-aspect-ratio: 1/1) {
+    .board {
+        /* width: 95%;*/
+        height: calc(95vh - 210px);
+        max-height: 95vw;
+    }
+}
+
+/*.board::before {
+    content: "";
+    display: block;
+    padding-top: 100%;*/ /* This ensures the board is always square */
+/*grid-area: 1 / 1 / 9 / 9;
+}*/
+
+.board-wrapper {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+
+    .board .row {
+        display: table-row;
     }
 
     .board .square {
-        width: calc(100% / 8); /* Assuming an 8x8 board */
-        position: relative;
-        padding-bottom: calc(100% / 8); /* Maintain aspect ratio */
+        display: table-cell;
         text-align: center;
         vertical-align: middle;
         border: 1px solid black;
+        position: relative;
     }
 
-        .board .square span {
-            font-size: 3.5em;
-            line-height: 1; /* Ensures the text is vertically centered */
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        .board .square img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensures the image scales to fit the square */
             pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .board .square.light {
@@ -42,7 +89,7 @@
 
     .board.showMoveFrom .square.dark.moveFrom,
     .board.showMoveTo .square.dark.moveTo {
-        background-color: powderblue
+        background-color: powderblue;
     }
 
     .board .square.selected {
@@ -52,3 +99,7 @@
         .board .square.selected.moveTo {
             background-color: lightcoral !important;
         }
+
+    .board .coordLabel {
+        text-align: center;
+    }

@@ -11,6 +11,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
 
         public class PieceSet
         {
+            private static string GetSvgFileName(int playerId, string pieceLetter) => $"Chess_{pieceLetter}{(playerId == 0 ? "l" : "d")}t45.svg";
             public PieceSet(Player player)
             {
                 var id = player.Id * 8; // Start at 0 for White or 8 for Black
@@ -24,6 +25,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "King",
                     Description = "King",
                     Unicode = player.Id == 0 ? "♔" : "♚",
+                    SvgFileName = GetSvgFileName(player.Id, "k"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new LeaperBehaviour(1, 1),
@@ -40,6 +42,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "Queen",
                     Description = "Queen",
                     Unicode = player.Id == 0 ? "♕" : "♛",
+                    SvgFileName = GetSvgFileName(player.Id, "q"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new RiderBehaviour(new LeaperBehaviour(1, 1)),
@@ -53,6 +56,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "Rook",
                     Description = "Rook",
                     Unicode = player.Id == 0 ? "♖" : "♜",
+                    SvgFileName = GetSvgFileName(player.Id, "r"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new RiderBehaviour(new LeaperBehaviour(1, 0))
@@ -65,6 +69,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "Rook with castling rights",
                     Description = "Rook with castling rights",
                     Unicode = player.Id == 0 ? "♖" : "♜",
+                    SvgFileName = GetSvgFileName(player.Id, "r"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new RiderBehaviour(new LeaperBehaviour(1, 0)),
@@ -78,6 +83,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "Bishop",
                     Description = "Bishop",
                     Unicode = player.Id == 0 ? "♗" : "♝",
+                    SvgFileName = GetSvgFileName(player.Id, "b"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new RiderBehaviour(new LeaperBehaviour(1, 1))
@@ -90,6 +96,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "Knight",
                     Description = "Knight",
                     Unicode = player.Id == 0 ? "♘" : "♞",
+                    SvgFileName = GetSvgFileName(player.Id, "n"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new LeaperBehaviour(2, 1)
@@ -102,6 +109,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "Pawn",
                     Description = "Pawn",
                     Unicode = player.Id == 0 ? "♙" : "♟",
+                    SvgFileName = GetSvgFileName(player.Id, "p"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new PawnStandardMoveBehaviour(),
@@ -118,6 +126,7 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     Name = "Pawn vulnerable to en passant",
                     Description = "Pawn vulnerable to en passant",
                     Unicode = player.Id == 0 ? "♙" : "♟",
+                    SvgFileName = GetSvgFileName(player.Id, "p"),
                     Behaviours = new IPieceBehaviour[]
                     {
                         new PawnStandardMoveBehaviour(),
@@ -127,6 +136,9 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                 };
 
             }
+
+
+
             public PieceType King { get; }
             public PieceType Queen { get; }
             public PieceType Rook { get; }
