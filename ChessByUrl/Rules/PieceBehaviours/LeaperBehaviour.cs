@@ -32,14 +32,14 @@ namespace ChessByUrl.Rules.PieceBehaviours
         }
 
 
-        public IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType fromPiece)
+        public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
         {
             var candidates = AllOffsets.Select(offset => from + offset);
             foreach (var to in candidates)
             {
-                if (ruleset.IsInBounds(to))
+                if (game.Ruleset.IsInBounds(to))
                 {
-                    var toPiece = board.GetPiece(to);
+                    var toPiece = game.CurrentBoard.GetPiece(to);
                     if (toPiece == null || toPiece?.Player.Id != fromPiece.Player.Id)
                     {
                         yield return new Move { From = from, To = to };

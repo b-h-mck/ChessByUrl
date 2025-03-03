@@ -53,13 +53,13 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
 
             if (expectCastlingAvailable) {
                 var expectedLegalMoves = new Move[] { new Move { From = "e1", To = "c1" } };
-                var actualLegalMoves = initiatorBehaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "e1", responderTransformPieceType);
+                var actualLegalMoves = initiatorBehaviour.GetLegalMovesFrom(fakes.Game, "e1", responderTransformPieceType);
                 CollectionAssert.AreEqual(expectedLegalMoves, actualLegalMoves, $"{caseDescription}: Expected castling to be available.");
             }
             else
             {
                 var expectedLegalMoves = new Move[] { };
-                var actualLegalMoves = initiatorBehaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "e1", responderTransformPieceType);
+                var actualLegalMoves = initiatorBehaviour.GetLegalMovesFrom(fakes.Game, "e1", responderTransformPieceType);
                 CollectionAssert.AreEqual(expectedLegalMoves, actualLegalMoves, $"{caseDescription}: Expected castling to be unavailable.");
             }
         }
@@ -86,66 +86,21 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             fakes.AddPieces(attackerPieceType, "e4");
 
             var expectedLegalMovesCandidates = new Move[] { new Move { From = "e1", To = "c1" } };
-            var legalMoveCandidates = initiatorBehaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "e1", responderTransformPieceType);
+            var legalMoveCandidates = initiatorBehaviour.GetLegalMovesFrom(fakes.Game, "e1", responderTransformPieceType);
             CollectionAssert.AreEqual(expectedLegalMovesCandidates, legalMoveCandidates, "Expected castling to be legal at Get stage (but filtered later).");
 
             if (expectCastlingAvailable) 
             {
                 var expectedFilteredLegalMoves = new Move[] { new Move { From = "e1", To = "c1" } };
-                var actualFilteredLegalMoves = initiatorBehaviour.FilterLegalMoveCandidates(fakes.Ruleset, fakes.Board, "e1", initiatorPieceType, legalMoveCandidates);
+                var actualFilteredLegalMoves = initiatorBehaviour.FilterLegalMoveCandidates(fakes.Game, "e1", initiatorPieceType, legalMoveCandidates);
                 CollectionAssert.AreEqual(expectedFilteredLegalMoves, actualFilteredLegalMoves, $"{caseDescription}: Expected castling to be available.");
             }
             else
             {
                 var expectedFilteredLegalMoves = new Move[] { };
-                var actualFilteredLegalMoves = initiatorBehaviour.FilterLegalMoveCandidates(fakes.Ruleset, fakes.Board, "e1", initiatorPieceType, legalMoveCandidates);
+                var actualFilteredLegalMoves = initiatorBehaviour.FilterLegalMoveCandidates(fakes.Game, "e1", initiatorPieceType, legalMoveCandidates);
                 CollectionAssert.AreEqual(expectedFilteredLegalMoves, actualFilteredLegalMoves, $"{caseDescription}:Expected castling to be filtered out.");
             }
         }
-
-        //[TestMethod]
-        //public void FilterLegalMoveCandidates_InitiatorStartThreatened_NoCastle()
-        //{
-        //    AssertCastleWithThreat("e1", false);
-        //}
-
-        //[TestMethod]
-        //public void GetLegalMovesFrom_InitiatorRouteThreatened_NoCastle()
-        //{
-        //    AssertCastleWithThreat("e1", []);
-        //}
-
-        //[TestMethod]
-        //public void GetLegalMovesFrom_InitiatorTargetThreatened_NoCastle()
-        //{
-        //    AssertCastleWithThreat("e1", []);
-        //}
-
-        //[TestMethod]
-        //public void GetLegalMovesFrom_ResponderRouteThreatened_CanCastle()
-        //{
-        //    AssertCastleWithThreat("e1", [new Move { From = "e1", To=}]);
-
-        //    var expectedLegalMoves = new Move[] { new Move { From = "e1", To = "c1" } };
-        //    var actualLegalMoves = initiatorBehaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "e1", responderTransformPieceType);
-        //    CollectionAssert.AreEqual(expectedLegalMoves, actualLegalMoves);
-        //}
-
-        //[TestMethod]
-        //public void GetLegalMovesFrom_ReponderStartThreatened_CanCastle()
-        //{
-        //    var fakes = new Fakes();
-        //    (var initiatorBehaviour, var initiatorPieceType, var responderPieceType, var responderTransformPieceType) = SetupPieceTypes(fakes);
-
-        //    fakes.AddPieces(initiatorPieceType, "e1");
-        //    fakes.AddPieces(responderPieceType, "a1");
-
-        //    var attackerPieceType = fakes.AddAttackingPieceType(1, "a1");
-        //    fakes.AddPieces(attackerPieceType, "e4");
-
-        //    var expectedLegalMoves = new Move[] { new Move { From = "e1", To = "c1" } };
-        //    var actualLegalMoves = initiatorBehaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "e1", responderTransformPieceType);
-        //    CollectionAssert.AreEqual(expectedLegalMoves, actualLegalMoves);
-        //}
     }
 }

@@ -12,7 +12,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
         public int PromotionRank;
         public Func<IEnumerable<PieceType>> AvailablePromotions;
 
-        public IEnumerable<Move> FilterLegalMoveCandidates(IRuleset ruleset, Board board, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates)
+        public IEnumerable<Move> FilterLegalMoveCandidates(Game game, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates)
         {
             foreach (Move move in candidates)
             {
@@ -29,5 +29,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
                 }
             }
         }
+
+        
     }
 }

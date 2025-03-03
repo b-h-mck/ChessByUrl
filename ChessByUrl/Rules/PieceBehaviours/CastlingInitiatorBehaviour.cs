@@ -24,14 +24,14 @@ namespace ChessByUrl.Rules.PieceBehaviours
         public int ResponderToFile { get; }
         public Func<PieceType>? ResponderTransform { get; }
 
-        public IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType fromPiece)
+        public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
         {
-            var responder = board.GetPiece(from.WithFile(ResponderFromFile));
+            var responder = game.CurrentBoard.GetPiece(from.WithFile(ResponderFromFile));
             if (responder == null || responder.Player.Id != fromPiece.Player.Id || !responder.Behaviours.OfType<CastlingResponderBehaviour>().Any())
             {
                 yield break;
             }
-            if (!AllSquaresEmptyExceptCastlers(board, from))
+            if (!AllSquaresEmptyExceptCastlers(game.CurrentBoard, from))
                 yield break;
             // Threat checking is taken care of in the filter method, to avoid stack blowout.
             yield return new Move { From = from, To = from.WithFile(InitiatorToFile) };
@@ -50,26 +50,26 @@ namespace ChessByUrl.Rules.PieceBehaviours
             return true;
         }
 
-        private bool AnyThreatenedSquaresOnInitiatorRoute(IRuleset ruleset, Board board, Coords from, Player player)
+        private bool AnyThreatenedSquaresOnInitiatorRoute(Game game, Coords from, Player player)
         {
             var files = new[] { from.File, InitiatorToFile };
             for (int file = files.Min(); file <= files.Max(); file++)
             {
                 var coords = from.WithFile(file);
-                var hasThreat = ruleset.GetThreats(board, coords, player)?.Any() ?? false;
+                var hasThreat = game.GetThreats(coords, player)?.Any() ?? false;
                 if (hasThreat)
                     return true;
             }
             return false;
         }
 
-        public IEnumerable<Move> FilterLegalMoveCandidates(IRuleset ruleset, Board board, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates)
+        public IEnumerable<Move> FilterLegalMoveCandidates(Game game, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates)
         {
             foreach (var move in candidates)
             {
                 if (move.From == thisSquare && IsCastle(move))
                 {
-                    if (AnyThreatenedSquaresOnInitiatorRoute(ruleset, board, thisSquare, thisPiece.Player))
+                    if (AnyThreatenedSquaresOnInitiatorRoute(game, thisSquare, thisPiece.Player))
                         continue;
                 }
                 yield return move;
@@ -77,7 +77,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
         }
 
 
-        public Board ApplyMoveFrom(IRuleset ruleset, Board boardBeforeMove, Board boardSoFar, Move move, PieceType fromPiece)
+        public Board ApplyMoveFrom(Game gameBeforeMove, Board boardSoFar, Move move, PieceType fromPiece)
         {
             if (IsCastle(move))
             {
@@ -93,11 +93,11 @@ namespace ChessByUrl.Rules.PieceBehaviours
 
         private bool IsCastle(Move move) => move.From.Rank == move.To.Rank && move.To.File == InitiatorToFile;
 
-        public Board AdjustBoardAfterMove(IRuleset ruleset, Board boardAfterMove, Coords thisSquare, PieceType thisPiece, Move move)
+        public Board AdjustBoardAfterMove(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, Coords thisSquare, PieceType thisPiece)
         {
             var responderTransform = ResponderTransform?.Invoke();
             if (responderTransform == null)
-                return boardAfterMove;
+                return boardAfterMoveSoFar;
 
             var initiatorHasMoved = move.To == thisSquare;
             var initiatorOriginalSquare = initiatorHasMoved ? move.From : thisSquare;
@@ -109,14 +109,15 @@ namespace ChessByUrl.Rules.PieceBehaviours
             // If it doesn't have castling rights, don't worry about it.
             if (initiatorHasMoved || responderHasMoved)
             {
-                if (boardAfterMove.GetPiece(responderCurrentSquare)?.Behaviours.OfType<CastlingResponderBehaviour>().Any() ?? false)
+                if (boardAfterMoveSoFar.GetPiece(responderCurrentSquare)?.Behaviours.OfType<CastlingResponderBehaviour>().Any() ?? false)
                 {
-                    boardAfterMove = boardAfterMove.ReplacePiece(responderCurrentSquare, responderTransform);
+                    boardAfterMoveSoFar = boardAfterMoveSoFar.ReplacePiece(responderCurrentSquare, responderTransform);
                 }
             }
 
-            return boardAfterMove;
+            return boardAfterMoveSoFar;
 
         }
+
     }
 }

@@ -33,6 +33,7 @@ namespace ChessByUrl.Tests.Rules
 
         public FakeRuleset Ruleset { get; set; }
         public Board Board { get; set; }
+        public Game Game => new Game(Ruleset, Board);
 
         /// <summary>
         /// Adds a piece or pieces of the given type to the board (replaces anything already there).
@@ -98,54 +99,14 @@ namespace ChessByUrl.Tests.Rules
 
             private readonly Coords _attackedSquare;
 
-            public IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType pieceType)
+            public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
             {
                 yield return new Move { From = from, To = _attackedSquare };
             }
-        }
-
-
-            //public Fakes AddDummyPieceType(int playerId)
-            //{
-            //    var ruleset = (FakeRuleset)Ruleset;
-            //    var pieceType = new PieceType
-            //    {
-            //        Id = ruleset.PieceTypeList.Count,
-            //        Player = ruleset.PlayerList[playerId],
-            //        Name = "Test",
-            //        Description = "Test",
-            //        Unicode = "T",
-            //        Behaviours = []
-            //    };
-            //    ruleset.PieceTypeList.Add(pieceType);
-            //    return this;
-            //}
-
-            //public Fakes AddPiecesWithBehaviour(int playerId, IPieceBehaviour pieceBehaviour, params IEnumerable<Coords> coords)
-            //{
-            //    var ruleset = (FakeRuleset)Ruleset;
-
-            //    var pieceType = new PieceType
-            //    {
-            //        Id = ruleset.PieceTypeList.Count,
-            //        Player = ruleset.PlayerList[playerId],
-            //        Name = "Test",
-            //        Description = "Test",
-            //        Unicode = "T",
-            //        Behaviours = [pieceBehaviour]
-            //    };
-            //    ruleset.PieceTypeList.Add(pieceType);
-
-            //    foreach (var coord in coords)
-            //        Board = Board.ReplacePiece(coord, pieceType);
-
-            //    return this;
-            //}
-
-
-
 
         }
+
+    }
 
     public class FakeRuleset : IRuleset
     {
@@ -160,9 +121,14 @@ namespace ChessByUrl.Tests.Rules
 
         public GameStatus GameStatus { get; set; } = new GameStatus { IsFinished = false, StatusStrings = [] };
 
-        public GameStatus GetGameStatus(Board board)
+        public GameStatus GetGameStatus(Game game)
         {
             return GameStatus;
+        }
+
+        public Player GetNextPlayer(Player currentPlayer)
+        {
+            return PlayerList.First(p => p.Id != currentPlayer.Id);
         }
 
         public bool IsInBounds(Coords coords)

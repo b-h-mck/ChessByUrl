@@ -1,5 +1,5 @@
 ﻿function onSquareClick(square) {
-    var coords = JSON.parse(square.getAttribute('data-coords'));
+    var coords = square.getAttribute('data-coords');
     var legalMoves = JSON.parse(square.getAttribute('data-legalmoves'));
 
     var board = square.closest('.board');
@@ -26,7 +26,7 @@ function handleSelect(board, square, coords, legalMoves) {
     square.classList.add('selected');
 
     legalMoves.forEach(move => {
-        let targetSquare = board.querySelector(`.square[data-coords='${JSON.stringify(move.Move.To)}']`);
+        let targetSquare = board.querySelector(`.square[data-coords='${move.To}']`);
         if (targetSquare) {
             targetSquare.classList.add('moveTo');
             targetSquare.setAttribute('data-url', move.Url);

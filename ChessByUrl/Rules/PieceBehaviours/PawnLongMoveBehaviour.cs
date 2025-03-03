@@ -26,7 +26,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
         private int _targetRank;
         private Func<PieceType>? _transform;
 
-        public IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType fromPiece)
+        public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
         {
             if (from.Rank != _startRank)
             {
@@ -38,7 +38,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
             while (to.Rank != _targetRank)
             {
                 to = to.AddToRank(direction);
-                var piece = board.GetPiece(to);
+                var piece = game.CurrentBoard.GetPiece(to);
                 if (piece != null)
                 {
                     yield break;
@@ -48,15 +48,17 @@ namespace ChessByUrl.Rules.PieceBehaviours
             yield return new Move { From = from, To = to };
         }
 
-        public Board ApplyMoveFrom(IRuleset ruleset, Board board, Board boardSoFar, Move move, PieceType fromPiece)
+
+        public Board ApplyMoveFrom(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, PieceType fromPiece)
         {
             bool wasLongMove = move.From.Rank == _startRank && move.To.Rank == _targetRank;
             if (wasLongMove && _transform != null)
             {
                 var newPieceType = _transform();
-                boardSoFar = boardSoFar.ReplacePiece(move.To, newPieceType);
+                boardAfterMoveSoFar = boardAfterMoveSoFar.ReplacePiece(move.To, newPieceType);
             }
-            return boardSoFar;
+            return boardAfterMoveSoFar;
         }
+
     }
 }

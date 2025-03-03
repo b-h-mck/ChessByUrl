@@ -10,21 +10,22 @@
         }
 
 
-        public IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType fromPiece)
+        public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
         {
             var direction = fromPiece.Player.Direction;
             var farthestRank = fromPiece.Player.FarthestRank;
             var to = new Coords(from.Rank + direction, from.File);
-            if (!ruleset.IsInBounds(to))
+            if (!game.Ruleset.IsInBounds(to))
             {
                 yield break;
             }
             
-            var piece = board.GetPiece(to);
+            var piece = game.CurrentBoard.GetPiece(to);
             if (piece == null)
             {
                 yield return new Move { From = from, To = to };
             }
         }
+
     }
 }

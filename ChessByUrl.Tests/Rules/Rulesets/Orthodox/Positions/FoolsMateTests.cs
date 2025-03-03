@@ -16,55 +16,53 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
     public class FoolsMateTests
     {
 
-        private (Board board, Player white, Player black) CreateBoard(OrthodoxRuleset ruleset)
+        private (Game game, Player white, Player black) CreateGame()
         {
+            var ruleset = new OrthodoxRuleset();
             var boardParser = new CustomBoardParser();
             var board = boardParser.Parse(ruleset, "cBgAFISABBkAQKAUWYQ0BDjEhBidGGDkmNWYSXyZ0Bm5iGjoebnVsXF47aBdsRVwwL31WbyE");
             var white = ruleset.Players.Single(p => p.Id == 0);
             var black = ruleset.Players.Single(p => p.Id == 1);
             Assert.IsNotNull(board);
             Assert.AreEqual(white, board.CurrentPlayer);
-            return (board, white, black);
+            return (new Game(ruleset, board), white, black);
         }
 
         [TestMethod]
         public void IsCheckmate()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
-
-            var gameStatus = ruleset.GetGameStatus(board);
+           (var game, var white, var black) = CreateGame();
+            var gameStatus = game.Status;
             Assert.IsNotNull(gameStatus);
             Assert.IsTrue(gameStatus.IsFinished);
-            CollectionAssert.AreEqual([(white, 0), (black, 1)], gameStatus.PlayerPoints);
+            CollectionAssert.AreEqual(new[] { (white, 0m), (black, 1m) }, gameStatus.PlayerPoints);
         }
 
         [TestMethod]
         public void WhiteKingIsThreatened()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
             Coords whiteKingSquare = "e1";
-            var whiteKing = board.GetPiece(whiteKingSquare);
+            var whiteKing = game.CurrentBoard.GetPiece(whiteKingSquare);
             Assert.IsNotNull(whiteKing);
             Assert.AreEqual(white, whiteKing.Player);
             Assert.AreEqual("King", whiteKing.Name);
 
-            var threats = ruleset.GetThreats(board, whiteKingSquare, white);
+            var threats = game.GetThreats(whiteKingSquare, white);
             Assert.AreEqual(1, threats.Count());
         }
 
         [TestMethod]
         public void NoLegalMoves()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
-            foreach (var (coords, pieceType) in board)
+            (var game, var white, var black) = CreateGame();
+
+            foreach (var (coords, pieceType) in game.CurrentBoard)
             {
                 if (pieceType?.Player == white)
                 {
-                    var legalMoves = ruleset.GetLegalMoves(board, coords);
+                    var legalMoves = game.GetLegalMovesFromSquare(coords);
                     Assert.AreEqual(0, legalMoves.Count());
                 }
             }

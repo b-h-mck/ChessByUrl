@@ -8,68 +8,45 @@ namespace ChessByUrl.Pages
 {
     public class PlayModel : PageModel
     {
-        public IRuleset? Ruleset { get; set; }
-        public Board? InitialBoard { get; set; }
-        public Board? Board { get; set; }
-        public IEnumerable<Move>? MovesSoFar { get; set; }
+        public Game? Game { get; set; }
 
-        public class MoveUrl
+        public record MoveUrl (string To, string Url);
+        public Dictionary<string, List<MoveUrl>>? LegalMoveUrlsFromSquare { get; set; }
+
+        public void OnGet(string? rulesetString, string? boardString, string? movesString)
         {
-            public required Move Move { get; init; }
-            public required string Url { get; init; }
-        }
-
-        public List<MoveUrl>[][]? LegalMoves { get; set; }
-
-        public void OnGet(string? ruleset, string? state, string? moves)
-        {
+            // Parse the strings
             var parsers = ParserCollection.Instance;
-            Ruleset = parsers.ParseRuleset(ruleset ?? "");
-            InitialBoard = Ruleset != null ? parsers.ParseBoard(Ruleset, state ?? "") : null;
-            MovesSoFar = Ruleset != null && InitialBoard != null ? parsers.ParseMoves(Ruleset, InitialBoard, moves ?? "") : null;
-
-            // TODO: Play the moves onto the board
-            Board = InitialBoard;
-
-            if (Ruleset == null || InitialBoard == null || Board == null)
+            var ruleset = parsers.ParseRuleset(rulesetString ?? "");
+            var initialBoard = ruleset != null ? parsers.ParseBoard(ruleset, boardString ?? "") : null;
+            if (ruleset == null || initialBoard == null)
             {
                 return;
             }
+            var moveList = parsers.ParseMoves(ruleset, initialBoard, movesString ?? "") ?? Enumerable.Empty<Move>();
 
-            LegalMoves = new List<MoveUrl>[8][];
-
-            for (int rank = 0; rank < 8; rank++)
+            // Create the initial game, then play the moves onto it
+            Game = new Game(ruleset, initialBoard);
+            foreach (var move in moveList)
             {
-                LegalMoves[rank] = new List<MoveUrl>[8];
-                for (int file = 0; file < 8; file++)
-                {
-                    var from = new Coords(rank, file);
-                    if (InitialBoard != null && InitialBoard.GetPiece(from)?.Player == InitialBoard.CurrentPlayer)
-                    {
-                        var legalMoves = Ruleset.GetLegalMoves(InitialBoard, from);
-                        foreach (var move in legalMoves)
-                        {
-                            var legalMovesForSquare = LegalMoves[from.Rank][from.File] ?? new List<MoveUrl>();
-                            LegalMoves[from.Rank][from.File] = legalMovesForSquare;
-
-                            var newBoard = Ruleset.ApplyMove(Board, move);
-                            var newBoardString = parsers.SerialiseBoard(Ruleset, newBoard);
-                            var url = $"/Play/{ruleset}/{newBoardString}";
-                            legalMovesForSquare.Add(new MoveUrl { Move = move, Url = url });
-                        }
-                    }
-                }
+                Game = new Game(Game, move);
             }
-        }
 
-
-        public IEnumerable<(Player? player, string statusString)> GetStatusStrings()
-        {
-            if (Ruleset == null || Board == null)
+            // Get the current player's legal moves and generate URLs for them
+            var legalMoves = Game.GetLegalMovesForPlayer(Game.CurrentPlayer);
+            LegalMoveUrlsFromSquare = new Dictionary<string, List<MoveUrl>>();
+            foreach (var move in legalMoves)
             {
-                return Enumerable.Empty<(Player? player, string statusString)>();
+                var newMoveList = moveList.Append(move);
+                var newMovesString = parsers.SerialiseMoves(ruleset, initialBoard, newMoveList);
+                var newUrl = Url.Page("/Play", new { rulesetString, boardString, movesString = newMovesString });
+                if (newUrl == null)
+                    continue;
+
+                var existingMovesFromSquare = LegalMoveUrlsFromSquare.GetValueOrDefault(move.From.ToString()) ?? new List<MoveUrl>();
+                existingMovesFromSquare.Add(new MoveUrl(move.To.ToString(), newUrl));
+                LegalMoveUrlsFromSquare[move.From.ToString()] = existingMovesFromSquare;
             }
-            return Ruleset.GetGameStatus(Board).StatusStrings;
         }
 
     }

@@ -18,13 +18,15 @@
 
         public Func<PieceType> Transform { get; }
 
-        public Board AdjustBoardAfterMove(IRuleset ruleset, Board boardAfterMove, Coords thisSquare, PieceType thisPiece, Move move)
+        public Board AdjustBoardAfterMove(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, Coords thisSquare, PieceType thisPiece)
         {
             if (thisSquare != move.To || Math.Abs(move.From.Rank - move.To.Rank) > 1)
             {
-                return boardAfterMove;
+                return boardAfterMoveSoFar;
             }
-            return boardAfterMove.ReplacePiece(thisSquare, Transform());
+            return boardAfterMoveSoFar.ReplacePiece(thisSquare, Transform());
         }
+
+        
     }
 }

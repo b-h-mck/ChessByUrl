@@ -1,4 +1,4 @@
-﻿@page "/play/{ruleset?}/{state?}/{moves?}"
+﻿@page "/play/{rulesetString?}/{boardString?}/{movesStrinng?}"
 @using System.Text.Json
 @using ChessByUrl.Rules
 @model PlayModel
@@ -8,11 +8,9 @@
     <div id="promotion-selector" class="widget">
     </div>
     <div class="widget">
-    @if (Model.Board != null && Model.Ruleset != null)
-    {
-        var status = Model.Ruleset.GetGameStatus(Model.Board);
-        if (status != null)
+        @if (Model.Game != null)
         {
+            var status = Model.Game.Status;
             if (status.IsFinished)
             {
                 <div>Game Over!</div>
@@ -39,36 +37,37 @@
                 }
             </div>
         }
-    }
     </div>
 }
 
 <div class="board-wrapper">
-    @if (Model.Board != null && Model.LegalMoves != null)
+    @if (Model.Game?.CurrentBoard != null && Model.LegalMoveUrlsFromSquare != null)
     {
         <table class="board showMoveFrom">
-        @for (int rank = Model.Board.Ranks.Count - 1; rank >= 0; rank--)
-        {
-            <tr>
-            @for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
+            @for (int rank = Model.Game.CurrentBoard.Ranks.Count - 1; rank >= 0; rank--)
             {
-                var coords = new Coords(rank, file);
-                var piece = Model.Board.Ranks[rank][file];
-                var legalMoves = Model.LegalMoves[rank][file];
-
-                var squareClass = "square";
-                squareClass += (rank + file) % 2 == 0 ? " light" : " dark";
-                squareClass += (legalMoves == null) ? "" : " moveFrom";
-
-                <td class="@squareClass" onclick="onSquareClick(this)" data-coords=@JsonSerializer.Serialize(coords) data-legalmoves="@JsonSerializer.Serialize(legalMoves)">
-                    @if (piece != null)
+                <tr>
+                    @for (int file = 0; file < Model.Game.CurrentBoard.Ranks[rank].Count; file++)
                     {
-                        <img src="/images/@piece.SvgFileName" alt="@piece.Name" />
+                        var coords = new Coords(rank, file);
+                        var piece = Model.Game.CurrentBoard.Ranks[rank][file];
+                        var legalMoves = Model.LegalMoveUrlsFromSquare.GetValueOrDefault(coords.ToString()) ?? [];
+
+                        var squareClass = "square";
+                        squareClass += (rank + file) % 2 == 0 ? " light" : " dark";
+                        squareClass += (legalMoves.Any()) ? " moveFrom" : "";
+
+                        <td class="@squareClass" onclick="onSquareClick(this)" 
+                            data-coords="@coords.ToString()" 
+                            data-legalmoves="@JsonSerializer.Serialize(legalMoves)">
+                            @if (piece != null)
+                            {
+                                <img src="/images/@piece.SvgFileName" alt="@piece.Name" />
+                            }
+                        </td>
                     }
-                </td>
+                </tr>
             }
-            </tr>
-        }
         </table>
     }
 </div>

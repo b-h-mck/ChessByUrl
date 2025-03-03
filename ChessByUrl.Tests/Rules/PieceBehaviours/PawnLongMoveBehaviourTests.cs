@@ -18,7 +18,7 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var fakes = new Fakes();
             var pieceType = fakes.AddPieceType(0, behaviour);
 
-            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "b3", pieceType);
+            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "b3", pieceType);
             Assert.AreEqual(0, actualMoves.Count());
         }
 
@@ -29,7 +29,7 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var fakes = new Fakes();
             var pieceType = fakes.AddPieceType(0, behaviour);
 
-            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "b2", pieceType);
+            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "b2", pieceType);
             Move[] expectedMoves = { new Move { From = "b2", To = "b4" } };
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
         }
@@ -43,9 +43,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var opponentPieceType = fakes.AddDummyPieceType(1);
             fakes.AddPieces(opponentPieceType, "b4", "c3");
 
-            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "b2", fakes.Ruleset.PieceTypes.First());
+            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "b2", fakes.Ruleset.PieceTypes.First());
             Assert.AreEqual(0, actualMoves.Count());
-            actualMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "c2", fakes.Ruleset.PieceTypes.First());
+            actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "c2", fakes.Ruleset.PieceTypes.First());
             Assert.AreEqual(0, actualMoves.Count());
         }
 
@@ -58,9 +58,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var samePlayerPieceType = fakes.AddDummyPieceType(0);
             fakes.AddPieces(samePlayerPieceType, "b4", "c3");
 
-            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "b2", fakes.Ruleset.PieceTypes.First());
+            var actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "b2", fakes.Ruleset.PieceTypes.First());
             Assert.AreEqual(0, actualMoves.Count());
-            actualMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, "c2", fakes.Ruleset.PieceTypes.First());
+            actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "c2", fakes.Ruleset.PieceTypes.First());
             Assert.AreEqual(0, actualMoves.Count());
         }
 
@@ -73,8 +73,8 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var originalPieceType = fakes.AddPieceType(0, behaviour);
 
             fakes.AddPieces(originalPieceType, "d2");
-            var boardAfterMove = fakes.Ruleset.ApplyMove(fakes.Board, new Move { From = "d2", To = "d4" });
-            var actualPieceType = boardAfterMove.GetPiece("d4");
+            var gameAfterMove = new Game(fakes.Game, new Move { From = "d2", To = "d4" });
+            var actualPieceType = gameAfterMove.CurrentBoard.GetPiece("d4");
             Assert.IsNotNull(actualPieceType);
             Assert.AreEqual(transformPieceType.Id, actualPieceType.Id);
         }

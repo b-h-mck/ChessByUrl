@@ -7,6 +7,18 @@
             Bytes = bytes;
         }
 
+        public PackedByteReader(string base64)
+        {
+            base64 = base64.Replace('-', '+').Replace('_', '/');
+            int paddingNeeded = 4 - (base64.Length % 4);
+            if (paddingNeeded < 4)
+            {
+                base64 = base64.PadRight(base64.Length + paddingNeeded, '=');
+            }
+            Convert.TryFromBase64Chars(base64, new Span<byte>(new byte[base64.Length]), out int bytesWritten);
+            Bytes = Convert.FromBase64String(base64);
+        }
+
         public byte[] Bytes { get; }
         public int ByteIndex { get; private set; } = 0;
         public int BitIndex { get; private set; } = 0;

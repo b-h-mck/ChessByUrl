@@ -17,24 +17,24 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
     public class FoolsEnPassantTests
     {
 
-        private (Board board, Player white, Player black) CreateBoard(OrthodoxRuleset ruleset)
+        private (Game game, Player white, Player black) CreateGame()
         {
+            var ruleset = new OrthodoxRuleset();
             var boardParser = new CustomBoardParser();
             var board = boardParser.Parse(ruleset, "cBgAFISABBkAQKAUWYQ0BDjEhBidGGTEWdylNUC50Bm5iGjoubnZsV0M9YSdpR1wwL31WbyE");
             var white = ruleset.Players.Single(p => p.Id == 0);
             var black = ruleset.Players.Single(p => p.Id == 1);
             Assert.IsNotNull(board);
             Assert.AreEqual(white, board.CurrentPlayer);
-            return (board, white, black);
+            return (new Game(ruleset, board), white, black);
         }
 
         [TestMethod]
         public void IsInProgess()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            var gameStatus = ruleset.GetGameStatus(board);
+            var gameStatus = game.Status;
             Assert.IsNotNull(gameStatus);
             Assert.IsTrue(!gameStatus.IsFinished);
             Assert.IsNull(gameStatus.PlayerPoints);
@@ -43,10 +43,9 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void D5PawnIsVulnerableToEnPassant()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            var pieceType = board.GetPiece("d5");
+            var pieceType = game.CurrentBoard.GetPiece("d5");
             Assert.IsNotNull(pieceType);
             var behaviours = pieceType.Behaviours.OfType<EnPassantVictimBehaviour>();
             Assert.IsTrue(behaviours.Any(), "Expected EnPassantVictimBehaviour on D5.");
@@ -55,10 +54,9 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void E5PawnCanAttackD6()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            var moves = ruleset.GetLegalMoves(board, "e5");
+            var moves = game.GetLegalMovesFromSquare("e5");
             Assert.AreEqual(1, moves.Count(), "Expected one move for E5");
             var move = moves.Single();
             Assert.AreEqual((Coords)"e5", move.From);

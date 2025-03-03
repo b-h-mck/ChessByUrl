@@ -14,30 +14,31 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
             return coords.File >= 0 && coords.File < 8 && coords.Rank >= 0 && coords.Rank < 8;
         }
 
-        public GameStatus GetGameStatus(Board board)
+        public GameStatus GetGameStatus(Game game)
         {
-            var currentPlayerPieces = board.FindSquares(square => square?.Player.Id == board.CurrentPlayer.Id);
-            var hasLegalMoves = currentPlayerPieces.SelectMany(square => this.GetLegalMoves(board, square)).Any();
-            
-            var currentPlayerKing = board.FindSquares(square => 
-                    square?.Player.Id == board.CurrentPlayer.Id && 
+            //var currentPlayerPieces = game.CurrentBoard.FindSquares(square => square?.Player.Id == board.CurrentPlayer.Id);
+            //var hasLegalMoves = currentPlayerPieces.SelectMany(square => game.GetLegalMoves(board, square)).Any();
+            bool hasLegalMoves = game.GetLegalMovesForPlayer(game.CurrentPlayer).Any();
+
+            var currentPlayerKing = game.CurrentBoard.FindSquares(square => 
+                    square?.Player.Id == game.CurrentPlayer.Id && 
                     square.Behaviours.OfType<RoyalBehaviour>().Any()
                 ).First();
 
-            var inCheck = this.GetThreats(board, currentPlayerKing, board.CurrentPlayer).Any();
+            bool inCheck = game.GetThreats(currentPlayerKing, game.CurrentPlayer).Any();
 
             IEnumerable<(Player, decimal)>? playerPoints = null;
             var statusStrings = new List<(Player?, string)>();
-            statusStrings.Add((board.CurrentPlayer, "to move"));
+            statusStrings.Add((game.CurrentPlayer, "to move"));
 
             if (inCheck && !hasLegalMoves)
             {
-                statusStrings.Add((board.CurrentPlayer, "in checkmate"));
-                playerPoints = this.Players.Select(player => (player, player.Id == board.CurrentPlayer.Id ? 0m : 1m));
+                statusStrings.Add((game.CurrentPlayer, "in checkmate"));
+                playerPoints = this.Players.Select(player => (player, player.Id == game.CurrentPlayer.Id ? 0m : 1m));
             }
             else if (inCheck)
             {
-                statusStrings.Add((board.CurrentPlayer, "in check"));
+                statusStrings.Add((game.CurrentPlayer, "in check"));
             }
             else if (!hasLegalMoves)
             {
@@ -53,7 +54,9 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
             };
         }
 
-
-
+        public Player GetNextPlayer(Player currentPlayer)
+        {
+            return OrthodoxPlayers.All.First(player => player.Id != currentPlayer.Id);
+        }
     }
 }

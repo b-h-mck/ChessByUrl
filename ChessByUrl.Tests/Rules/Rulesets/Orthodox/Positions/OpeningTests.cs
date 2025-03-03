@@ -17,24 +17,24 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
     [TestClass]
     public class OpeningTests
     {
-        private (Board board, Player white, Player black) CreateBoard(OrthodoxRuleset ruleset)
+        private (Game game, Player white, Player black) CreateGame()
         {
+            var ruleset = new OrthodoxRuleset();
             var boardParser = new StartBoardParser();
             var board = boardParser.Parse(ruleset, "s");
             var white = ruleset.Players.Single(p => p.Id == 0);
             var black = ruleset.Players.Single(p => p.Id == 1);
             Assert.IsNotNull(board);
             Assert.AreEqual(white, board.CurrentPlayer);
-            return (board, white, black);
+            return (new Game(ruleset, board), white, black);
         }
 
         [TestMethod]
         public void IsInProgess()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            var gameStatus = ruleset.GetGameStatus(board);
+            var gameStatus = game.Status;
             Assert.IsNotNull(gameStatus);
             Assert.IsTrue(!gameStatus.IsFinished);
             Assert.IsNull(gameStatus.PlayerPoints);
@@ -43,12 +43,12 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void CanMovePawns()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
+
             for (int file = 0; file < 8; file++)
             {
                 var from = new Coords(1, file);
-                var moves = ruleset.GetLegalMoves(board, from);
+                var moves = game.GetLegalMovesFromSquare(from);
                 Assert.AreEqual(2, moves.Count());
                 Assert.IsTrue(moves.All(m => m.From == from));
                 Assert.IsTrue(moves.All(m => m.To.File == file));
@@ -60,13 +60,13 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void MoveOne()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
-            var move = new Move { From = "a2", To = "a3" };
-            var boardAfterMove = ruleset.ApplyMove(board, move);
-            Assert.AreEqual(black, boardAfterMove.CurrentPlayer);
+            (var game, var white, var black) = CreateGame();
 
-            var pieceType = boardAfterMove.GetPiece("a3");
+            var move = new Move { From = "a2", To = "a3" };
+            var gameAfterMove = new Game(game, move);
+            Assert.AreEqual(black, gameAfterMove.CurrentPlayer);
+
+            var pieceType = gameAfterMove.CurrentBoard.GetPiece("a3");
             Assert.IsNotNull(pieceType);
             Assert.AreEqual(white, pieceType.Player);
             Assert.AreEqual("Pawn", pieceType.Name);
@@ -76,13 +76,13 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void MoveTwo()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
-            var move = new Move { From = "a2", To = "a4" };
-            var boardAfterMove = ruleset.ApplyMove(board, move);
-            Assert.AreEqual(black, boardAfterMove.CurrentPlayer);
+            (var game, var white, var black) = CreateGame();
 
-            var pieceType = boardAfterMove.GetPiece("a4");
+            var move = new Move { From = "a2", To = "a4" };
+            var gameAfterMove = new Game(game, move);
+            Assert.AreEqual(black, gameAfterMove.CurrentPlayer);
+
+            var pieceType = gameAfterMove.CurrentBoard.GetPiece("a4");
             Assert.IsNotNull(pieceType);
             Assert.AreEqual(white, pieceType.Player);
             Assert.AreEqual("Pawn vulnerable to en passant", pieceType.Name);

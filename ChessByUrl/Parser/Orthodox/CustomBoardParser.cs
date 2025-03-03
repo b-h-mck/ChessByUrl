@@ -34,7 +34,7 @@ namespace ChessByUrl.Parser.Orthodox
                 }
             }
             byteWriter.Write(eofId, 0, eofId);
-            var boardString = BytesToUrlFriendlyBase64(byteWriter.Bytes);
+            var boardString = byteWriter.ToBase64();
 
             return $"c{boardString}";
         }
@@ -51,8 +51,7 @@ namespace ChessByUrl.Parser.Orthodox
             var eofId = maxPieceId + 1;
             var maxPlayerId = ruleset.Players.Max(player => player.Id);
 
-            var bytes = UrlFriendlyBase64ToBytes(boardString.Substring(1));
-            var byteReader = new PackedByteReader(bytes);
+            var byteReader = new PackedByteReader(boardString.Substring(1));
             var currentPlayerId = byteReader.Read(0, maxPlayerId);
             var currentPlayer = ruleset.Players.First(player => player.Id == currentPlayerId);
 
@@ -73,25 +72,6 @@ namespace ChessByUrl.Parser.Orthodox
             }
 
             return new Board(currentPlayer, new BoardRanks(squares.Select(rank => new BoardRank(rank)).ToArray()));
-
-        }
-
-        private static string BytesToUrlFriendlyBase64(byte[] bytes)
-        {
-            var base64 = Convert.ToBase64String(bytes);
-            return base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
-        }
-
-        private static byte[] UrlFriendlyBase64ToBytes(string base64)
-        {
-            base64 = base64.Replace('-', '+').Replace('_', '/');
-            int paddingNeeded = 4 - (base64.Length % 4);
-            if (paddingNeeded < 4)
-            {
-                base64 = base64.PadRight(base64.Length + paddingNeeded, '=');
-            }
-            Convert.TryFromBase64Chars(base64, new Span<byte>(new byte[base64.Length]), out int bytesWritten);
-            return Convert.FromBase64String(base64);
         }
     }
 }

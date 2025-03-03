@@ -20,7 +20,7 @@ namespace ChessByUrl.Rules
     /// </remarks>
     public interface IGetLegalMovesBehaviour : IPieceBehaviour
     {
-        IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType fromPiece);
+        IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece);
     }
 
     /// <summary>
@@ -34,7 +34,7 @@ namespace ChessByUrl.Rules
     /// </remarks>
     public interface IFilterLegalMoveCandidatesBehaviour : IPieceBehaviour
     {
-        IEnumerable<Move> FilterLegalMoveCandidates(IRuleset ruleset, Board board, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates);
+        IEnumerable<Move> FilterLegalMoveCandidates(Game game, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates);
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ namespace ChessByUrl.Rules
     /// </remarks>
     public interface IApplyMoveBehaviour : IPieceBehaviour
     {
-        Board ApplyMoveFrom(IRuleset ruleset, Board boardBeforeMove, Board boardSoFar, Move move, PieceType fromPiece);
+        Board ApplyMoveFrom(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, PieceType fromPiece);
     }
 
     /// <summary>
@@ -67,7 +67,7 @@ namespace ChessByUrl.Rules
     /// </remarks>
     public interface IAdjustBoardAfterMoveBehaviour : IPieceBehaviour
     {
-        Board AdjustBoardAfterMove(IRuleset ruleset, Board boardAfterMove, Coords thisSquare, PieceType thisPiece, Move move);
+        Board AdjustBoardAfterMove(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, Coords thisSquare, PieceType thisPiece);
     }
 
 }

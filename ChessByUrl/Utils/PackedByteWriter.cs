@@ -11,6 +11,12 @@
         public int ByteIndex { get; private set; } = 0;
         public int BitIndex { get; private set; } = 0;
 
+        public string ToBase64()
+        {
+            var base64 = Convert.ToBase64String(Bytes);
+            return base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+        }
+
         public void Write(int value, int minValue, int maxValue)
         {
             if (minValue >= maxValue)

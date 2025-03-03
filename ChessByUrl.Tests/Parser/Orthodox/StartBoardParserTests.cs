@@ -49,7 +49,7 @@ namespace ChessByUrl.Tests.Parser.Orthodox
                 throw new NotImplementedException();
             }
 
-            public GameStatus GetGameStatus(Board board)
+            public GameStatus GetGameStatus(Game game)
             {
                 throw new NotImplementedException();
             }
@@ -58,6 +58,12 @@ namespace ChessByUrl.Tests.Parser.Orthodox
             {
                 throw new NotImplementedException();
             }
+
+            public Player GetNextPlayer(Player currentPlayer)
+            {
+                throw new NotImplementedException();
+            }
+
             public bool IsInBounds(Coords coords)
             {
                 throw new NotImplementedException();

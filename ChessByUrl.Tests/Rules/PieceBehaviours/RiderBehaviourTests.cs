@@ -43,9 +43,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var fakes = new Fakes(); //.AddPiecesWithBehaviour(0, behaviour);
             var pieceType = fakes.AddPieceType(0, behaviour);
 
-            var actualMiddleMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, middleFrom, pieceType);
-            var actualEdgeMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, edgeFrom, pieceType);
-            var actualCornerMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, cornerFrom, pieceType);
+            var actualMiddleMoves = behaviour.GetLegalMovesFrom(fakes.Game, middleFrom, pieceType);
+            var actualEdgeMoves = behaviour.GetLegalMovesFrom(fakes.Game, edgeFrom, pieceType);
+            var actualCornerMoves = behaviour.GetLegalMovesFrom(fakes.Game, cornerFrom, pieceType);
 
             CollectionAssert.AreEqual(expectedMiddleMoves, actualMiddleMoves);
             CollectionAssert.AreEqual(expectedEdgeMoves, actualEdgeMoves);
@@ -84,9 +84,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var fakes = new Fakes();
             var pieceType = fakes.AddPieceType(0, behaviour);
 
-            var actualMiddleMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, middleFrom, pieceType);
-            var actualEdgeMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, edgeFrom, pieceType);
-            var actualCornerMoves = behaviour.GetLegalMovesFrom(fakes.Ruleset, fakes.Board, cornerFrom, pieceType);
+            var actualMiddleMoves = behaviour.GetLegalMovesFrom(fakes.Game, middleFrom, pieceType);
+            var actualEdgeMoves = behaviour.GetLegalMovesFrom(fakes.Game, edgeFrom, pieceType);
+            var actualCornerMoves = behaviour.GetLegalMovesFrom(fakes.Game, cornerFrom, pieceType);
 
             CollectionAssert.AreEqual(expectedMiddleMoves, actualMiddleMoves);
             CollectionAssert.AreEqual(expectedEdgeMoves, actualEdgeMoves);

@@ -16,24 +16,24 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
     public class KingsPawnOpeningTests
     {
 
-        private (Board board, Player white, Player black) CreateBoard(OrthodoxRuleset ruleset)
+        private (Game game, Player white, Player black) CreateGame()
         {
+            var ruleset = new OrthodoxRuleset();
             var boardParser = new CustomBoardParser();
             var board = boardParser.Parse(ruleset, "cBwAFISABBkAQKAUWYQ0BDjEhBidGGTEWN0ZcQjZxJm5mWjgubnZsV0M9YSdpR1wwL31WbyE");
             var white = ruleset.Players.Single(p => p.Id == 0);
             var black = ruleset.Players.Single(p => p.Id == 1);
             Assert.IsNotNull(board);
             Assert.AreEqual(black, board.CurrentPlayer);
-            return (board, white, black);
+            return (new Game(ruleset, board), white, black);
         }
 
         [TestMethod]
         public void IsInProgess()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            var gameStatus = ruleset.GetGameStatus(board);
+            var gameStatus = game.Status;
             Assert.IsNotNull(gameStatus);
             Assert.IsTrue(!gameStatus.IsFinished);
             Assert.IsNull(gameStatus.PlayerPoints);
@@ -42,12 +42,12 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void CanMovePawns()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
+
             for (int file = 0; file < 8; file++)
             {
                 var from = new Coords(6, file);
-                var moves = ruleset.GetLegalMoves(board, from);
+                var moves = game.GetLegalMovesFromSquare(from);
                 Assert.AreEqual(2, moves.Count());
                 Assert.IsTrue(moves.All(m => m.From == from));
                 Assert.IsTrue(moves.All(m => m.To.File == file));

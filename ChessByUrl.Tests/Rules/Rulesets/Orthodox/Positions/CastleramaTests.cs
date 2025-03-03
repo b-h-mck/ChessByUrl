@@ -20,51 +20,61 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
     public class CastleramaTests
     {
 
-        private (Board board, Player white, Player black) CreateBoard(OrthodoxRuleset ruleset)
+        //private (Board board, Player white, Player black) CreateBoard(OrthodoxRuleset ruleset)
+        //{
+        //    var boardParser = new CustomBoardParser();
+        //    var board = boardParser.Parse(ruleset, "cBgAEAkAECkMbARYyIg0VDjZxJiIJGiIhJWVdRS1yRUlrVTsGbnIsXVY2dnZrYRwiJ3xVbyE");
+        //    var white = ruleset.Players.Single(p => p.Id == 0);
+        //    var black = ruleset.Players.Single(p => p.Id == 1);
+        //    Assert.IsNotNull(board);
+        //    Assert.AreEqual(white, board.CurrentPlayer);
+        //    return (board, white, black);
+        //}
+        private (Game game, Player white, Player black) CreateGame()
         {
+            var ruleset = new OrthodoxRuleset();
             var boardParser = new CustomBoardParser();
             var board = boardParser.Parse(ruleset, "cBgAEAkAECkMbARYyIg0VDjZxJiIJGiIhJWVdRS1yRUlrVTsGbnIsXVY2dnZrYRwiJ3xVbyE");
             var white = ruleset.Players.Single(p => p.Id == 0);
             var black = ruleset.Players.Single(p => p.Id == 1);
             Assert.IsNotNull(board);
             Assert.AreEqual(white, board.CurrentPlayer);
-            return (board, white, black);
+            return (new Game(ruleset, board), white, black);
         }
 
-        private void AssertWhiteToMove(Board board)
+        private void AssertWhiteToMove(Game game)
         {
-            Assert.AreEqual("White", board.CurrentPlayer.Name);
+            Assert.AreEqual("White", game.CurrentPlayer.Name);
         }
 
-        private void AssertBlackToMove(Board board)
+        private void AssertBlackToMove(Game game)
         {
-            Assert.AreEqual("Black", board.CurrentPlayer.Name);
+            Assert.AreEqual("Black", game.CurrentPlayer.Name);
         }
 
-        private void AssertMoveLegal(OrthodoxRuleset ruleset, Board board, Coords from, Coords to, string? message = null)
+        private void AssertMoveLegal(Game game, Coords from, Coords to, string? message = null)
         {
-            var legalMoves = ruleset.GetLegalMoves(board, from);
+            var legalMoves = game.GetLegalMovesFromSquare(from);
             Assert.IsTrue(legalMoves.Any(m => m.To == to), message ?? $"Expected {from}-{to} to be legal.");
         }
-        private void AssertMoveIllegal(OrthodoxRuleset ruleset, Board board, Coords from, Coords to, string? message = null)
+        private void AssertMoveIllegal(Game game, Coords from, Coords to, string? message = null)
         {
-            var legalMoves = ruleset.GetLegalMoves(board, from);
+            var legalMoves = game.GetLegalMovesFromSquare(from);
             Assert.IsFalse(legalMoves.Any(m => m.To == to), message ?? $"Expected {from}-{to} to be illegal.");
         }
 
-        private Board AssertAndApplyMove(OrthodoxRuleset ruleset, Board board, Coords from, Coords to, string? message = null)
+        private Game AssertAndApplyMove(Game game, Coords from, Coords to, string? message = null)
         {
-            AssertMoveLegal(ruleset, board, from, to, message);
-            return ruleset.ApplyMove(board, new Move { From = from, To = to });
+            AssertMoveLegal(game, from, to, message);
+            return new Game(game, new Move { From = from, To = to });
         }
 
         [TestMethod]
         public void IsInProgess()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            var gameStatus = ruleset.GetGameStatus(board);
+            var gameStatus = game.Status;
             Assert.IsNotNull(gameStatus);
             Assert.IsTrue(!gameStatus.IsFinished);
             Assert.IsNull(gameStatus.PlayerPoints);
@@ -73,17 +83,16 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void InitialStateCorrect()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            Assert.AreEqual("Rook with castling rights", board.GetPiece("a1")?.Name);
-            Assert.AreEqual("Rook with castling rights", board.GetPiece("h1")?.Name);
-            Assert.AreEqual("Rook with castling rights", board.GetPiece("a8")?.Name);
-            Assert.AreEqual("Rook with castling rights", board.GetPiece("h8")?.Name);
-            Assert.AreEqual("King", board.GetPiece("e1")?.Name);
-            Assert.AreEqual("King", board.GetPiece("e8")?.Name);
+            Assert.AreEqual("Rook with castling rights", game.CurrentBoard.GetPiece("a1")?.Name);
+            Assert.AreEqual("Rook with castling rights", game.CurrentBoard.GetPiece("h1")?.Name);
+            Assert.AreEqual("Rook with castling rights", game.CurrentBoard.GetPiece("a8")?.Name);
+            Assert.AreEqual("Rook with castling rights", game.CurrentBoard.GetPiece("h8")?.Name);
+            Assert.AreEqual("King", game.CurrentBoard.GetPiece("e1")?.Name);
+            Assert.AreEqual("King", game.CurrentBoard.GetPiece("e8")?.Name);
 
-            var kingMoves = ruleset.GetLegalMoves(board, "e1");
+            var kingMoves = game.GetLegalMovesFromSquare("e1");
             Assert.AreEqual(2, kingMoves.Count());
             Assert.AreEqual((Coords)"e2", kingMoves.First().To);
             Assert.AreEqual((Coords)"d1", kingMoves.Last().To);
@@ -92,126 +101,121 @@ namespace ChessByUrl.Tests.Rules.Rulesets.Orthodox.Positions
         [TestMethod]
         public void CanCastleKingsideWhenBishopMoved()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            board = AssertAndApplyMove(ruleset, board, "f1", "d3");
-            board = AssertAndApplyMove(ruleset, board, "f8", "d6");
-            AssertWhiteToMove(board);
+            game = AssertAndApplyMove(game, "f1", "d3");
+            game = AssertAndApplyMove(game, "f8", "d6");
+            AssertWhiteToMove(game);
 
-            AssertMoveLegal(ruleset, board, "e1", "g1", "Expected white kingside castling to be legal");
-            AssertMoveLegal(ruleset, board, "e8", "g8", "Expected black kingside castling to be legal");
-            AssertMoveIllegal(ruleset, board, "e1", "c1", "Expected white queenside castling to be illegal");
-            AssertMoveIllegal(ruleset, board, "e8", "c8", "Expected black queenside castling to be illegal");
+            AssertMoveLegal(game, "e1", "g1", "Expected white kingside castling to be legal");
+            AssertMoveLegal(game, "e8", "g8", "Expected black kingside castling to be legal");
+            AssertMoveIllegal(game, "e1", "c1", "Expected white queenside castling to be illegal");
+            AssertMoveIllegal(game, "e8", "c8", "Expected black queenside castling to be illegal");
         }
 
         [TestMethod]
         public void CanCastleQueensideWhenBishopMoved()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
-            board = AssertAndApplyMove(ruleset, board, "c1", "a3");
-            board = AssertAndApplyMove(ruleset, board, "c8", "a6");
-            AssertWhiteToMove(board);
+            game = AssertAndApplyMove(game, "c1", "a3");
+            game = AssertAndApplyMove(game, "c8", "a6");
+            AssertWhiteToMove(game);
 
-            AssertMoveLegal(ruleset, board, "e1", "c1", "Expected white queenside castling to be legal");
-            AssertMoveLegal(ruleset, board, "e8", "c8", "Expected black queenside castling to be legal");
-            AssertMoveIllegal(ruleset, board, "e1", "g1", "Expected white kingside castling to be illegal");
-            AssertMoveIllegal(ruleset, board, "e8", "g8", "Expected black kingside castling to be illegal");
+            AssertMoveLegal(game, "e1", "c1", "Expected white queenside castling to be legal");
+            AssertMoveLegal(game, "e8", "c8", "Expected black queenside castling to be legal");
+            AssertMoveIllegal(game, "e1", "g1", "Expected white kingside castling to be illegal");
+            AssertMoveIllegal(game, "e8", "g8", "Expected black kingside castling to be illegal");
         }
 
         [TestMethod]
         public void CanCastleKingsideAndQueensideWhenBothBishopsMoved()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
             // Move all bishops out of the way.
-            board = AssertAndApplyMove(ruleset, board, "f1", "d3");
-            board = AssertAndApplyMove(ruleset, board, "f8", "d6");
-            board = AssertAndApplyMove(ruleset, board, "c1", "a3");
-            board = AssertAndApplyMove(ruleset, board, "c8", "a6");
-            AssertWhiteToMove(board);
+            game = AssertAndApplyMove(game, "f1", "d3");
+            game = AssertAndApplyMove(game, "f8", "d6");
+            game = AssertAndApplyMove(game, "c1", "a3");
+            game = AssertAndApplyMove(game, "c8", "a6");
+            AssertWhiteToMove(game);
 
-            AssertMoveLegal(ruleset, board, "e1", "g1", "Expected white kingside castling to be legal");
-            AssertMoveLegal(ruleset, board, "e8", "g8", "Expected black kingside castling to be legal");
-            AssertMoveLegal(ruleset, board, "e1", "c1", "Expected white queenside castling to be legal");
-            AssertMoveLegal(ruleset, board, "e8", "c8", "Expected black queenside castling to be legal");
+            AssertMoveLegal(game, "e1", "g1", "Expected white kingside castling to be legal");
+            AssertMoveLegal(game, "e8", "g8", "Expected black kingside castling to be legal");
+            AssertMoveLegal(game, "e1", "c1", "Expected white queenside castling to be legal");
+            AssertMoveLegal(game, "e8", "c8", "Expected black queenside castling to be legal");
         }
 
         [TestMethod]
         public void CastlingForbiddenAfterMovingRooks()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
             // Move all bishops out of the way.
-            board = AssertAndApplyMove(ruleset, board, "f1", "d3");
-            board = AssertAndApplyMove(ruleset, board, "f8", "d6");
-            board = AssertAndApplyMove(ruleset, board, "c1", "a3");
-            board = AssertAndApplyMove(ruleset, board, "c8", "a6");
+            game = AssertAndApplyMove(game, "f1", "d3");
+            game = AssertAndApplyMove(game, "f8", "d6");
+            game = AssertAndApplyMove(game, "c1", "a3");
+            game = AssertAndApplyMove(game, "c8", "a6");
 
             // Shake off castling rights for white kingside and black queenside rooks.
-            board = AssertAndApplyMove(ruleset, board, "h1", "g1");
-            board = AssertAndApplyMove(ruleset, board, "a8", "b8");
-            board = AssertAndApplyMove(ruleset, board, "g1", "h1");
-            board = AssertAndApplyMove(ruleset, board, "b8", "a8");
-            AssertWhiteToMove(board);
+            game = AssertAndApplyMove(game, "h1", "g1");
+            game = AssertAndApplyMove(game, "a8", "b8");
+            game = AssertAndApplyMove(game, "g1", "h1");
+            game = AssertAndApplyMove(game, "b8", "a8");
+            AssertWhiteToMove(game);
 
-            AssertMoveLegal(ruleset, board, "e8", "g8", "Expected black kingside castling to be legal");
-            AssertMoveLegal(ruleset, board, "e1", "c1", "Expected white queenside castling to be legal");
-            AssertMoveIllegal(ruleset, board, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
+            AssertMoveLegal(game, "e8", "g8", "Expected black kingside castling to be legal");
+            AssertMoveLegal(game, "e1", "c1", "Expected white queenside castling to be legal");
+            AssertMoveIllegal(game, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
 
             // Shake off castling rights for the remaining rooks.
-            board = AssertAndApplyMove(ruleset, board, "a1", "b1");
-            board = AssertAndApplyMove(ruleset, board, "h8", "g8");
-            board = AssertAndApplyMove(ruleset, board, "b1", "a1");
-            board = AssertAndApplyMove(ruleset, board, "g8", "h8");
-            AssertWhiteToMove(board);
+            game = AssertAndApplyMove(game, "a1", "b1");
+            game = AssertAndApplyMove(game, "h8", "g8");
+            game = AssertAndApplyMove(game, "b1", "a1");
+            game = AssertAndApplyMove(game, "g8", "h8");
+            AssertWhiteToMove(game);
 
-            AssertMoveIllegal(ruleset, board, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e8", "g8", "Expected black kingside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e1", "c1", "Expected white queenside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e8", "g8", "Expected black kingside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e1", "c1", "Expected white queenside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
         }
 
         [TestMethod]
         public void CastlingForbiddenAfterMovingKings()
         {
-            var ruleset = new OrthodoxRuleset();
-            (var board, var white, var black) = CreateBoard(ruleset);
+            (var game, var white, var black) = CreateGame();
 
             // Move all bishops out of the way.
-            board = AssertAndApplyMove(ruleset, board, "f1", "d3");
-            board = AssertAndApplyMove(ruleset, board, "f8", "d6");
-            board = AssertAndApplyMove(ruleset, board, "c1", "a3");
-            board = AssertAndApplyMove(ruleset, board, "c8", "a6");
+            game = AssertAndApplyMove(game, "f1", "d3");
+            game = AssertAndApplyMove(game, "f8", "d6");
+            game = AssertAndApplyMove(game, "c1", "a3");
+            game = AssertAndApplyMove(game, "c8", "a6");
 
             // Shake the kings, which should remove all castling rights.
-            board = AssertAndApplyMove(ruleset, board, "e1", "f1");
-            board = AssertAndApplyMove(ruleset, board, "e8", "f8");
-            board = AssertAndApplyMove(ruleset, board, "f1", "e1");
-            board = AssertAndApplyMove(ruleset, board, "f8", "e8");
-            AssertWhiteToMove(board);
+            game = AssertAndApplyMove(game, "e1", "f1");
+            game = AssertAndApplyMove(game, "e8", "f8");
+            game = AssertAndApplyMove(game, "f1", "e1");
+            game = AssertAndApplyMove(game, "f8", "e8");
+            AssertWhiteToMove(game);
 
-            AssertMoveIllegal(ruleset, board, "e8", "g8", "Expected black kingside castling to be illegal after king move");
-            AssertMoveIllegal(ruleset, board, "e1", "c1", "Expected white queenside castling to be illegal after king move");
-            AssertMoveIllegal(ruleset, board, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e8", "g8", "Expected black kingside castling to be illegal after king move");
+            AssertMoveIllegal(game, "e1", "c1", "Expected white queenside castling to be illegal after king move");
+            AssertMoveIllegal(game, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
 
             // Shake off castling rights for the remaining rooks.
-            board = AssertAndApplyMove(ruleset, board, "a1", "b1");
-            board = AssertAndApplyMove(ruleset, board, "h8", "g8");
-            board = AssertAndApplyMove(ruleset, board, "b1", "a1");
-            board = AssertAndApplyMove(ruleset, board, "g8", "h8");
-            AssertWhiteToMove(board);
+            game = AssertAndApplyMove(game, "a1", "b1");
+            game = AssertAndApplyMove(game, "h8", "g8");
+            game = AssertAndApplyMove(game, "b1", "a1");
+            game = AssertAndApplyMove(game, "g8", "h8");
+            AssertWhiteToMove(game);
 
-            AssertMoveIllegal(ruleset, board, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e8", "g8", "Expected black kingside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e1", "c1", "Expected white queenside castling to be illegal after rook move");
-            AssertMoveIllegal(ruleset, board, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e1", "g1", "Expected white kingside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e8", "g8", "Expected black kingside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e1", "c1", "Expected white queenside castling to be illegal after rook move");
+            AssertMoveIllegal(game, "e8", "c8", "Expected black queenside castling to be illegal after rook move");
         }
     }
 }

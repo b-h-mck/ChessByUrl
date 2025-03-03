@@ -18,18 +18,18 @@
 
         public LeaperBehaviour InitialLeaper;
 
-        public IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType fromPiece)
+        public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
         {
             // Find the first leaps for the inner leaper, then for each of them continue in the same direction
             // until we hit something.
-            var firstLeaps = InitialLeaper.GetLegalMovesFrom(ruleset, board, from, fromPiece);
+            var firstLeaps = InitialLeaper.GetLegalMovesFrom(game, from, fromPiece);
             foreach (var firstLeap in firstLeaps)
             {
                 var to = firstLeap.To;
                 var offset = firstLeap.To - firstLeap.From;
-                while (ruleset.IsInBounds(to))
+                while (game.Ruleset.IsInBounds(to))
                 {
-                    var toPiece = board.GetPiece(to);
+                    var toPiece = game.CurrentBoard.GetPiece(to);
                     if (toPiece == null)
                     {
                         yield return new Move { From = from, To = to };
@@ -48,5 +48,6 @@
                 }
             }
         }
+
     }
 }

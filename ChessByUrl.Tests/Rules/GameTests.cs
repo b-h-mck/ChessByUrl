@@ -10,22 +10,22 @@ using System.Threading.Tasks;
 namespace ChessByUrl.Tests.Rules
 {
     [TestClass]
-    public class RulesetExtensionsTests
+    public class GameTests
     {
 
         
 
 
         [TestMethod]
-        public void GetLegalMoves_ReturnsFilteredMoves()
+        public void GetLegalMovesFromSquare_ReturnsFilteredMoves()
         {
             var fakes = CreateFakes();
 
-            var moves = fakes.Ruleset.GetLegalMoves(fakes.Board, new Coords(1, 1));
+            var moves = fakes.Game.GetLegalMovesFromSquare(new Coords(1, 1));
             CollectionAssert.AreEqual([new Move { From = new Coords(1, 1), To = new Coords(4, 4) }], moves.ToArray());
-            moves = fakes.Ruleset.GetLegalMoves(fakes.Board, new Coords(2, 2));
+            moves = fakes.Game.GetLegalMovesFromSquare(new Coords(2, 2));
             CollectionAssert.AreEqual([new Move { From = new Coords(2, 2), To = new Coords(4, 4) }], moves.ToArray());
-            moves = fakes.Ruleset.GetLegalMoves(fakes.Board, new Coords(3, 3));
+            moves = fakes.Game.GetLegalMovesFromSquare(new Coords(3, 3));
             CollectionAssert.AreEqual([], moves.ToArray());
         }
 
@@ -33,7 +33,8 @@ namespace ChessByUrl.Tests.Rules
         public void GetThreats_ReturnsUnfilteredThreats()
         {
             var fakes = CreateFakes();
-            var threats = fakes.Ruleset.GetThreats(fakes.Board, new Coords(4, 4), fakes.Ruleset.Players.Last());
+
+            var threats = fakes.Game.GetThreats(new Coords(4, 4), fakes.Ruleset.Players.Last());
             CollectionAssert.AreEqual(
                 [
                     new Move { From = new Coords(1, 1), To = new Coords(4, 4) },
@@ -43,22 +44,24 @@ namespace ChessByUrl.Tests.Rules
         }
 
         [TestMethod]
-        public void ApplyMove_ReturnsAppliedAndAdjustedBoard()
+        public void ConstructorWithMove_ReturnsAppliedAndAdjustedBoard()
         {
             var fakes = CreateFakes();
+
             var move = new Move { From = new Coords(1, 1), To = new Coords(4, 4) };
-            var result = fakes.Ruleset.ApplyMove(fakes.Board, move);
+            var gameAfterMove = new Game(fakes.Game, move);
+
             var pieceType = fakes.Ruleset.PieceTypes.First();
-            Assert.IsNotNull(result);
-            Assert.AreEqual(pieceType, result.GetPiece(new Coords(4, 4)));
-            Assert.AreEqual(pieceType, result.GetPiece(new Coords(7, 0)));
-            Assert.AreEqual(pieceType , result.GetPiece(new Coords(6, 0)));
-            Assert.AreEqual(1, result.CurrentPlayer.Id);
+            Assert.IsNotNull(gameAfterMove);
+            Assert.AreEqual(pieceType, gameAfterMove.CurrentBoard.GetPiece(new Coords(4, 4)));
+            Assert.AreEqual(pieceType, gameAfterMove.CurrentBoard.GetPiece(new Coords(7, 0)));
+            Assert.AreEqual(pieceType , gameAfterMove.CurrentBoard.GetPiece(new Coords(6, 0)));
+            Assert.AreEqual(1, gameAfterMove.CurrentPlayer.Id);
         }
 
         private Fakes CreateFakes()
         {
-            var result = new Fakes(); //.AddPiecesWithBehaviour(0, new FakeBehaviour(), "b2", "c3", "d4");
+            var result = new Fakes();
             var pieceType = result.AddPieceType(0, new FakeBehaviour());
             result.AddPieces(pieceType, "b2", "c3", "d4");
             return result;
@@ -66,13 +69,14 @@ namespace ChessByUrl.Tests.Rules
 
         private class FakeBehaviour : IGetLegalMovesBehaviour, IFilterLegalMoveCandidatesBehaviour, IApplyMoveBehaviour, IAdjustBoardAfterMoveBehaviour
         {
-            public IEnumerable<Move> GetLegalMovesFrom(IRuleset ruleset, Board board, Coords from, PieceType fromPiece) => [
+            public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece) => [
                 new Move { From = from, To = new Coords(4,4) }
             ];
-            public IEnumerable<Move> FilterLegalMoveCandidates(IRuleset ruleset, Board board, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates) =>
+            public IEnumerable<Move> FilterLegalMoveCandidates(Game game, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates) =>
                 candidates.Where(c => c.From.Rank != 3);
-            public Board ApplyMoveFrom(IRuleset ruleset, Board board, Board boardSoFar, Move move, PieceType fromPiece) => boardSoFar.ReplacePiece(new Coords(7, 0), fromPiece);
-            public Board AdjustBoardAfterMove(IRuleset ruleset, Board boardAfterMove, Coords thisSquare, PieceType thisPiece, Move move) => boardAfterMove.ReplacePiece(new Coords(6, 0), thisPiece);
+            public Board ApplyMoveFrom(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, PieceType fromPiece) => boardAfterMoveSoFar.ReplacePiece(new Coords(7, 0), fromPiece);
+            public Board AdjustBoardAfterMove(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, Coords thisSquare, PieceType thisPiece) => boardAfterMoveSoFar.ReplacePiece(new Coords(6, 0), thisPiece);
+
         }
 
     }
