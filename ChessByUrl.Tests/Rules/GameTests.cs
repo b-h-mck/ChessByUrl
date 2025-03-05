@@ -44,12 +44,12 @@ namespace ChessByUrl.Tests.Rules
         }
 
         [TestMethod]
-        public void ConstructorWithMove_ReturnsAppliedAndAdjustedBoard()
+        public void ApplyMove_ReturnsAppliedAndAdjustedBoard()
         {
             var fakes = CreateFakes();
 
             var move = new Move { From = new Coords(1, 1), To = new Coords(4, 4) };
-            var gameAfterMove = new Game(fakes.Game, move);
+            var gameAfterMove = fakes.Game.ApplyMove(move);
 
             var pieceType = fakes.Ruleset.PieceTypes.First();
             Assert.IsNotNull(gameAfterMove);

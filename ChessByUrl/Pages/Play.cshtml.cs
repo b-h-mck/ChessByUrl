@@ -27,10 +27,7 @@ namespace ChessByUrl.Pages
 
             // Create the initial game, then play the moves onto it
             Game = new Game(ruleset, initialBoard);
-            foreach (var move in moveList)
-            {
-                Game = new Game(Game, move);
-            }
+            Game.ApplyMoves(moveList);
 
             // Get the current player's legal moves and generate URLs for them
             var legalMoves = Game.GetLegalMovesForPlayer(Game.CurrentPlayer);

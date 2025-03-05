@@ -73,7 +73,7 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var originalPieceType = fakes.AddPieceType(0, behaviour);
 
             fakes.AddPieces(originalPieceType, "d2");
-            var gameAfterMove = new Game(fakes.Game, new Move { From = "d2", To = "d4" });
+            var gameAfterMove = fakes.Game.ApplyMove(new Move { From = "d2", To = "d4" });
             var actualPieceType = gameAfterMove.CurrentBoard.GetPiece("d4");
             Assert.IsNotNull(actualPieceType);
             Assert.AreEqual(transformPieceType.Id, actualPieceType.Id);

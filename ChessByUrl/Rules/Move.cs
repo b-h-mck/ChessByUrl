@@ -2,6 +2,8 @@
 {
     public class Move : IEquatable<Move>
     {
+        // TODO: Add a constructor and use it everywhere
+
         public required Coords From { get; init; }
         public required Coords To { get; init; }
 

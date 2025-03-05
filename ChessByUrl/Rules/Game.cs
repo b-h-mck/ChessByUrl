@@ -17,41 +17,29 @@
             MovesSoFar = [];
         }
 
-        /// <summary>
-        /// Create a game based on an existing game with an additional move applied.
-        /// </summary>
-        public Game(Game gameBeforeMove, Move moveToApply)
-        {
-            Ruleset = gameBeforeMove.Ruleset;
-            InitialBoard = gameBeforeMove.InitialBoard;
-            MovesSoFar = gameBeforeMove.MovesSoFar.Append(moveToApply);
-            CurrentBoard = ApplyMoveToBoard(gameBeforeMove, moveToApply);
-        }
-
-
         public IRuleset Ruleset { get; }
         public Board InitialBoard { get; }
-        public IEnumerable<Move> MovesSoFar { get; }
+        public IEnumerable<Move> MovesSoFar { get; private set; }
 
-        public Board CurrentBoard { get; }
+        public Board CurrentBoard { get; private set; }
         public Player CurrentPlayer => CurrentBoard.CurrentPlayer;
         public GameStatus Status => Ruleset.GetGameStatus(this);
 
-        private static Board ApplyMoveToBoard(Game gameBeforeMove, Move move)
+        public Game ApplyMove(Move move)
         {
-            var fromPiece = gameBeforeMove.CurrentBoard.GetPiece(move.From)
+            var fromPiece = CurrentBoard.GetPiece(move.From)
                 ?? throw new InvalidOperationException("Cannot apply a move from an empty square");
 
             // Do the default part of the move (From to To).
-            var boardAfterMove = gameBeforeMove.CurrentBoard
+            var boardAfterMove = CurrentBoard
                 .ReplacePiece(move.From, null)
-                .ReplacePiece(move.To, gameBeforeMove.CurrentBoard.GetPiece(move.From));
+                .ReplacePiece(move.To, CurrentBoard.GetPiece(move.From));
 
             // Get the ApplyMoveBehaviours for the moving piece and apply them
             var behaviours = fromPiece.Behaviours.OfType<IApplyMoveBehaviour>();
             foreach (var behaviour in behaviours)
             {
-                boardAfterMove = behaviour.ApplyMoveFrom(gameBeforeMove, boardAfterMove, move, fromPiece);
+                boardAfterMove = behaviour.ApplyMoveFrom(this, boardAfterMove, move, fromPiece);
             }
 
             // Get the AdjustBoardAfterMoveBehaviours for all pieces and apply them
@@ -62,12 +50,27 @@
                 var adjustBehaviours = pieceType.Behaviours.OfType<IAdjustBoardAfterMoveBehaviour>();
                 foreach (var adjustBehaviour in adjustBehaviours)
                 {
-                    boardAfterMove = adjustBehaviour.AdjustBoardAfterMove(gameBeforeMove, boardAfterMove, move, coords, pieceType);
+                    boardAfterMove = adjustBehaviour.AdjustBoardAfterMove(this, boardAfterMove, move, coords, pieceType);
                 }
             }
 
-            var nextPlayer = gameBeforeMove.Ruleset.GetNextPlayer(gameBeforeMove.CurrentPlayer);
-            return boardAfterMove.SetCurrentPlayer(nextPlayer);
+            var nextPlayer = Ruleset.GetNextPlayer(CurrentPlayer);
+            boardAfterMove = boardAfterMove.SetCurrentPlayer(nextPlayer);
+
+            var result = new Game(Ruleset, InitialBoard);
+            result.CurrentBoard = boardAfterMove;
+            result.MovesSoFar = MovesSoFar.Concat(new[] { move });
+            return result;
+        }
+
+        public Game ApplyMoves(IEnumerable<Move> moves)
+        {
+            var game = this;
+            foreach (var move in moves)
+            {
+                game = game.ApplyMove(move);
+            }
+            return game;
         }
 
 

@@ -19,14 +19,18 @@ namespace ChessByUrl.Parser.Orthodox
             var currentGame = new Game(ruleset, initialBoard);
             foreach (var move in moves)
             {
+                // Find the index of the legal move (bail out if it's not legal).
                 var legalMoves = currentGame.GetLegalMovesForPlayer(currentGame.CurrentPlayer).ToList();
                 var moveIndex = legalMoves.IndexOf(move);
                 if (moveIndex == -1)
                 {
                     return null;
                 }
-                byteWriter.Write(moveIndex, 0, legalMoves.Count);
-                currentGame = new Game(currentGame, move);
+
+                // We need to pretend there are at least 2 moves so that it can output at least a bit.
+                var numberOfLegalMoves = Math.Max(2, legalMoves.Count);
+                byteWriter.Write(moveIndex, 0, numberOfLegalMoves - 1);
+                currentGame = currentGame.ApplyMove(move);
             }
             return $"e{byteWriter.ToBase64()}";
         }
@@ -49,19 +53,25 @@ namespace ChessByUrl.Parser.Orthodox
             while (!finished)
             {
                 var legalMoves = currentGame.GetLegalMovesForPlayer(currentGame.CurrentPlayer).ToList();
+                if (legalMoves.Count == 0)
+                {
+                    finished = true;
+                    continue;
+                }
+                var numberOfLegalMoves = Math.Max(2, legalMoves.Count);
                 var moveIndex = byteReader.Read(0, legalMoves.Count);
                 if (moveIndex == null)
                 {
                     finished = true;
                     continue;
                 }
-                if (moveIndex == -1)
+                if (moveIndex == -1 || moveIndex >= legalMoves.Count)
                 {
                     return null;
                 }
                 var move = legalMoves[moveIndex.Value];
                 moves.Add(move);
-                currentGame = new Game(currentGame, move);
+                currentGame = currentGame.ApplyMove(move);
             }
             return moves;
         }

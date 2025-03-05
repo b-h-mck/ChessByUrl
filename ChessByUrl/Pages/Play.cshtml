@@ -1,4 +1,4 @@
-﻿@page "/play/{rulesetString?}/{boardString?}/{movesStrinng?}"
+﻿@page "/play/{rulesetString?}/{boardString?}/{movesString?}"
 @using System.Text.Json
 @using ChessByUrl.Rules
 @model PlayModel
@@ -38,15 +38,35 @@
             </div>
         }
     </div>
+    <div id="moveList" class="widget">
+        @if (Model.Game != null)
+        {
+            <ul>
+                @foreach (var move in Model.Game.MovesSoFar)
+                {
+                    <li>@move.From - @move.To</li>
+                }
+            </ul>
+        }
+    </div>
 }
 
 <div class="board-wrapper">
     @if (Model.Game?.CurrentBoard != null && Model.LegalMoveUrlsFromSquare != null)
     {
         <table class="board showMoveFrom">
+            <tr>
+                <th class="coordCorner" />
+                @for (int file = 0; file < Model.Game.CurrentBoard.Ranks[0].Count; file++)
+                {
+                    <th class="file">@((char)('a' + file))</th>
+                }
+                <th class="coordCorner" />
+            </tr>
             @for (int rank = Model.Game.CurrentBoard.Ranks.Count - 1; rank >= 0; rank--)
             {
                 <tr>
+                    <th class="rank">@(rank + 1)</th>
                     @for (int file = 0; file < Model.Game.CurrentBoard.Ranks[rank].Count; file++)
                     {
                         var coords = new Coords(rank, file);
@@ -66,8 +86,17 @@
                             }
                         </td>
                     }
+                    <th class="coordLabel">@(rank + 1)</th>
                 </tr>
             }
+            <tr>
+                <th class="coordCorner" />
+                @for (int file = 0; file < Model.Game.CurrentBoard.Ranks[0].Count; file++)
+                {
+                    <th class="file">@((char)('a' + file))</th>
+                }
+                <th class="coordCorner" />
+            </tr>
         </table>
     }
 </div>

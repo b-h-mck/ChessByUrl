@@ -12,7 +12,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
                 {
                     var royalSquareAfterMove = thisSquare == move.From ? move.To : thisSquare;
 
-                    var boardAfterMove = new Game(game, move);
+                    var boardAfterMove = game.ApplyMove(move);
                     var threats = game.GetThreats(royalSquareAfterMove, thisPiece.Player);
                     if (threats.Any())
                     {

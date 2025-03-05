@@ -10,120 +10,46 @@ namespace ChessByUrl.Tests.Utils
     [TestClass]
     public class PackedByteTests
     {
-        [TestMethod]
-        [DataRow("Single 8-bit", new[] { 0 }, 0, 255, new byte[] { 0 })]
-        [DataRow("Single 8-bit", new[] { 123 }, 0, 255, new byte[] { 123 })]
-        [DataRow("Single 8-bit", new[] { 255 }, 0, 255, new byte[] { 255 })]
-        [DataRow("Single 8-bit reduced range", new[] { 37 }, 0, 217, new byte[] { 37 })]
-        [DataRow("Single 8-bit offset range", new[] { 260 }, 230, 430, new byte[] { 30 })]
-        [DataRow("Single 1-bit", new[] { 0 }, 0, 1, new byte[] { 0 })]
-        [DataRow("Single 1-bit", new[] { 1 }, 0, 1, new byte[] { 1 })]
-        [DataRow("Single 7-bit", new[] { 76 }, 0, 120, new byte[] { 76 })]
 
-        [DataRow("Single 9-bit", new[] { 0 }, 0, 511, new byte[] { 0, 0 })]
-        [DataRow("Single 9-bit", new[] { 1 }, 0, 511, new byte[] { 0, 1 })]
-        [DataRow("Single 9-bit", new[] { 2 }, 0, 511, new byte[] { 1, 0 })]
-        [DataRow("Single 9-bit reduced range", new[] { 127 }, 0, 256, new byte[] { 63, 1 })]
-        [DataRow("Single 9-bit reduced range", new[] { 128 }, 0, 500, new byte[] { 64, 0 })]
-        [DataRow("Single 9-bit", new[] { 255 }, 0, 511, new byte[] { 127, 1 })]
-        [DataRow("Single 9-bit", new[] { 256 }, 0, 511, new byte[] { 128, 0 })]
-        [DataRow("Single 9-bit", new[] { 511 }, 0, 511, new byte[] { 255, 1 })]
+        public TestContext TestContext { get; set; }
 
-        [DataRow("Double 1-bit", new[] { 0, 0 }, 0, 1, new byte[] { 0 })]
-        [DataRow("Double 1-bit", new[] { 1, 0 }, 0, 1, new byte[] { 1 })]
-        [DataRow("Double 1-bit", new[] { 0, 1 }, 0, 1, new byte[] { 2 })]
-        [DataRow("Double 1-bit", new[] { 1, 1 }, 0, 1, new byte[] { 3 })]
-
-        [DataRow("Double 4-bit", new[] { 0, 0 }, 0, 15, new byte[] { 0 })]
-        [DataRow("Double 4-bit", new[] { 1, 0 }, 0, 15, new byte[] { 1 })]
-        [DataRow("Double 4-bit", new[] { 15, 0 }, 0, 15, new byte[] { 15 })]
-        [DataRow("Double 4-bit reduced range", new[] { 0, 1 }, 0, 8, new byte[] { 16 })]
-        [DataRow("Double 4-bit reduced offset range", new[] { 2, 2 }, 1, 14, new byte[] { 17 })]
-
-        [DataRow("Double 6-bit", new[] { 0, 0 }, 0, 63, new byte[] { 0, 0 })]
-        [DataRow("Triple 5-bit", new[] { 0, 0, 0 }, 0, 31, new byte[] { 0, 0 })]
-
-        public void Write(string caseDescription, int[] valuesToWrite, int min, int max, byte[] expectedBytes)
-        {
-            var writer = new PackedByteWriter();
-            foreach (var value in valuesToWrite)
-            {
-                writer.Write(value, min, max);
-            }
-            CollectionAssert.AreEqual(expectedBytes, writer.Bytes, $"Case: {caseDescription} [{string.Join(",", valuesToWrite)}] ({min}-{max})");
-        }
 
         [TestMethod]
-        [DataRow("Single 8-bit", new byte[] { 0 }, 0, 255, new[] { 0 })]
-        [DataRow("Single 8-bit", new byte[] { 123 }, 0, 255, new[] { 123 })]
-        [DataRow("Single 8-bit", new byte[] { 255 }, 0, 255, new[] { 255 })]
-        [DataRow("Single 8-bit reduced range", new byte[] { 37 }, 0, 217, new[] { 37 })]
-        [DataRow("Single 8-bit offset range", new byte[] { 30 }, 230, 430, new[] { 260 })]
-        [DataRow("Single 1-bit", new byte[] { 0 }, 0, 1, new[] { 0 })]
-        [DataRow("Single 1-bit", new byte[] { 1 }, 0, 1, new[] { 1 })]
-        [DataRow("Single 7-bit", new byte[] { 76 }, 0, 120, new[] { 76 })]
-
-        [DataRow("Single 9-bit", new byte[] { 0, 0 }, 0, 511, new[] { 0 })]
-        [DataRow("Single 9-bit", new byte[] { 0, 1 }, 0, 511, new[] { 1 })]
-        [DataRow("Single 9-bit", new byte[] { 1, 0 }, 0, 511, new[] { 2 })]
-        [DataRow("Single 9-bit reduced range", new byte[] { 63, 1 }, 0, 256, new[] { 127 })]
-        [DataRow("Single 9-bit reduced range", new byte[] { 64, 0 }, 0, 500, new[] { 128 })]
-        [DataRow("Single 9-bit", new byte[] { 127, 1 }, 0, 511, new[] { 255 })]
-        [DataRow("Single 9-bit", new byte[] { 128, 0 }, 0, 511, new[] { 256 })]
-        [DataRow("Single 9-bit", new byte[] { 255, 1 }, 0, 511, new[] { 511 })]
-
-        [DataRow("Double 1-bit", new byte[] { 0 }, 0, 1, new[] { 0, 0 })]
-        [DataRow("Double 1-bit", new byte[] { 1 }, 0, 1, new[] { 1, 0 })]
-        [DataRow("Double 1-bit", new byte[] { 2 }, 0, 1, new[] { 0, 1 })]
-        [DataRow("Double 1-bit", new byte[] { 3 }, 0, 1, new[] { 1, 1 })]
-
-        [DataRow("Double 4-bit", new byte[] { 0 }, 0, 15, new[] { 0, 0 })]
-        [DataRow("Double 4-bit", new byte[] { 1 }, 0, 15, new[] { 1, 0 })]
-        [DataRow("Double 4-bit", new byte[] { 15 }, 0, 15, new[] { 15, 0 })]
-        [DataRow("Double 4-bit reduced range", new byte[] { 16 }, 0, 8, new[] { 0, 1 })]
-        [DataRow("Double 4-bit reduced offset range", new byte[] { 17 }, 1, 14, new[] { 2, 2 })]
-
-        [DataRow("Double 6-bit", new byte[] { 0, 0 }, 0, 60, new[] { 0, 0 })]
-        public void Read(string caseDescription, byte[] bytes, int min, int max, int[] expectedValues)
-        {
-            var reader = new PackedByteReader(bytes);
-            var actualValues = new List<int>();
-            for (int i = 0; i < expectedValues.Length; i++)
-            {
-                actualValues.Add(reader.Read(min, max)!.Value);
-            }
-            CollectionAssert.AreEqual(expectedValues, actualValues, $"Case: {caseDescription} [{string.Join(",", expectedValues)}] ({min}-{max})");
-        }
-
-        [TestMethod]
-        [DataRow("Single 8-bit", new[] { 0 }, 0, 255)]
-        [DataRow("Single 8-bit", new[] { 123 }, 0, 255)]
-        [DataRow("Single 8-bit", new[] { 255 }, 0, 255)]
-        [DataRow("Single 8-bit reduced range", new[] { 37 }, 0, 217)]
-        [DataRow("Single 8-bit offset range", new[] { 260 }, 230, 430)]
-        [DataRow("Single 1-bit", new[] { 0 }, 0, 1)]
-        [DataRow("Single 1-bit", new[] { 1 }, 0, 1)]
-        [DataRow("Single 7-bit", new[] { 76 }, 0, 120)]
-        [DataRow("Single 9-bit", new[] { 0 }, 0, 511)]
-        [DataRow("Single 9-bit", new[] { 1 }, 0, 511)]
-        [DataRow("Single 9-bit", new[] { 2 }, 0, 511)]
-        [DataRow("Single 9-bit reduced range", new[] { 127 }, 0, 256)]
-        [DataRow("Single 9-bit reduced range", new[] { 128 }, 0, 500)]
-        [DataRow("Single 9-bit", new[] { 255 }, 0, 511)]
-        [DataRow("Single 9-bit", new[] { 256 }, 0, 511)]
-        [DataRow("Single 9-bit", new[] { 511 }, 0, 511)]
-        [DataRow("Double 1-bit", new[] { 0, 0 }, 0, 1)]
-        [DataRow("Double 1-bit", new[] { 1, 0 }, 0, 1)]
-        [DataRow("Double 1-bit", new[] { 0, 1 }, 0, 1)]
-        [DataRow("Double 1-bit", new[] { 1, 1 }, 0, 1)]
-        [DataRow("Double 4-bit", new[] { 0, 0 }, 0, 15)]
-        [DataRow("Double 4-bit", new[] { 1, 0 }, 0, 15)]
-        [DataRow("Double 4-bit", new[] { 15, 0 }, 0, 15)]
-        [DataRow("Double 4-bit reduced range", new[] { 0, 1 }, 0, 8)]
-        [DataRow("Double 4-bit reduced offset range", new[] { 2, 2 }, 1, 14)]
-        [DataRow("Double 6-bit", new[] { 0, 0 }, 0, 60)]
-        [DataRow("Triple 5-bit", new[] { 0, 0, 0 }, 0, 31)]
-        [DataRow("Triple 5-bit offset range", new[] { 18, 7, 15 }, 3, 34)]
+        [DataRow("01: Single 8-bit", new[] { 0 }, 0, 255)]
+        [DataRow("02: Single 8-bit", new[] { 123 }, 0, 255)]
+        [DataRow("03: Single 8-bit", new[] { 255 }, 0, 255)]
+        [DataRow("04: Single 8-bit reduced range", new[] { 37 }, 0, 217)]
+        [DataRow("05: Single 8-bit offset range", new[] { 260 }, 230, 430)]
+        [DataRow("06: Single 1-bit", new[] { 0 }, 0, 1)]
+        [DataRow("07: Single 1-bit", new[] { 1 }, 0, 1)]
+        [DataRow("08: Single 7-bit", new[] { 76 }, 0, 120)]
+        [DataRow("09: Single 9-bit", new[] { 0 }, 0, 511)]
+        [DataRow("10: Single 9-bit", new[] { 1 }, 0, 511)]
+        [DataRow("11: Single 9-bit", new[] { 2 }, 0, 511)]
+        [DataRow("12: Single 9-bit reduced range", new[] { 127 }, 0, 256)]
+        [DataRow("13: Single 9-bit reduced range", new[] { 128 }, 0, 500)]
+        [DataRow("14: Single 9-bit", new[] { 255 }, 0, 511)]
+        [DataRow("15: Single 9-bit", new[] { 256 }, 0, 511)]
+        [DataRow("16: Single 9-bit", new[] { 511 }, 0, 511)]
+        [DataRow("17: Double 1-bit", new[] { 0, 0 }, 0, 1)]
+        [DataRow("18: Double 1-bit", new[] { 1, 0 }, 0, 1)]
+        [DataRow("19: Double 1-bit", new[] { 0, 1 }, 0, 1)]
+        [DataRow("20: Double 1-bit", new[] { 1, 1 }, 0, 1)]
+        [DataRow("21: Double 4-bit", new[] { 0, 0 }, 0, 15)]
+        [DataRow("22: Double 4-bit", new[] { 1, 0 }, 0, 15)]
+        [DataRow("23: Double 4-bit", new[] { 15, 0 }, 0, 15)]
+        [DataRow("24: Double 4-bit reduced range", new[] { 0, 1 }, 0, 8)]
+        [DataRow("25: Double 4-bit reduced offset range", new[] { 2, 2 }, 1, 14)]
+        [DataRow("26: Double 6-bit", new[] { 0, 0 }, 0, 60)]
+        [DataRow("27: Triple 5-bit", new[] { 0, 0, 0 }, 0, 31)]
+        [DataRow("28: Triple 5-bit offset range", new[] { 18, 7, 15 }, 3, 34)]
+        [DataRow("29: Single 4-bit", new[] { 11 }, 0, 15)]
+        [DataRow("30: Single 4-bit reduced range", new[] { 11 }, 0, 14)]
+        [DataRow("31: Single 5-bit", new[] { 0 }, 0, 31)]
+        [DataRow("32: Single 5-bit", new[] { 14 }, 0, 31)]
+        [DataRow("33: Single 5-bit", new[] { 31 }, 0, 31)]
+        [DataRow("34: Single 5-bit reduced range", new[] { 14 }, 0, 20)]
+        [DataRow("34: Single 13-bit", new[] { 14 }, 0, 8191)]
         public void RoundTrip(string caseDescription, int[] valuesToWrite, int min, int max)
         {
             var writer = new PackedByteWriter();
@@ -131,16 +57,20 @@ namespace ChessByUrl.Tests.Utils
             {
                 writer.Write(value, min, max);
             }
-            var bytes = writer.Bytes;
+            var base64 = writer.ToBase64();
+            TestContext.WriteLine($"{caseDescription}: {base64}");
 
-            var reader = new PackedByteReader(bytes);
+            var reader = new PackedByteReader(base64);
             var actualValues = new List<int>();
-            for (int i = 0; i < valuesToWrite.Length; i++)
+            var readValue = reader.Read(min, max);
+            while (readValue != null)
             {
-                actualValues.Add(reader.Read(min, max)!.Value);
+                actualValues.Add(readValue!.Value);
+                readValue = reader.Read(min, max);
             }
             CollectionAssert.AreEqual(valuesToWrite, actualValues, $"Case: {caseDescription} [{string.Join(",", valuesToWrite)}] ({min}-{max})");
         }
+
 
         [TestMethod]
         [DataRow("Mixed ranges", new[] { 0, 123, 255, 37, 260, 1, 76 }, new[] { 0, 0, 0, 0, 230, 0, 0 }, new[] { 255, 255, 255, 217, 430, 1, 120 })]
@@ -154,11 +84,23 @@ namespace ChessByUrl.Tests.Utils
             }
             var bytes = writer.Bytes;
 
+            var base64 = writer.ToBase64();
+            TestContext.WriteLine($"{caseDescription}: {base64}");
+
             var reader = new PackedByteReader(bytes);
             var actualValues = new List<int>();
-            for (int i = 0; i < valuesToWrite.Length; i++)
+
+            var readIndex = 0;
+            var readValue = reader.Read(mins[0], maxs[0]);
+            while (readValue != null)
             {
-                actualValues.Add(reader.Read(mins[i], maxs[i])!.Value);
+                actualValues.Add(readValue!.Value);
+                readIndex++;
+                if (readIndex >= mins.Length || readIndex >= maxs.Length)
+                {
+                    break;
+                }
+                readValue = reader.Read(mins[readIndex], maxs[readIndex]);
             }
             CollectionAssert.AreEqual(valuesToWrite, actualValues, $"Case: {caseDescription} [{string.Join(",", valuesToWrite)}] (mins: {string.Join(",", mins)}, maxs: {string.Join(",", maxs)})");
         }
