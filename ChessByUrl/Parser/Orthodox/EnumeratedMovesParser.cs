@@ -59,7 +59,7 @@ namespace ChessByUrl.Parser.Orthodox
                     continue;
                 }
                 var numberOfLegalMoves = Math.Max(2, legalMoves.Count);
-                var moveIndex = byteReader.Read(0, legalMoves.Count);
+                var moveIndex = byteReader.Read(0, numberOfLegalMoves - 1);
                 if (moveIndex == null)
                 {
                     finished = true;

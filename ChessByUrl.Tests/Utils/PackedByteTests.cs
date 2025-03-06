@@ -49,7 +49,7 @@ namespace ChessByUrl.Tests.Utils
         [DataRow("32: Single 5-bit", new[] { 14 }, 0, 31)]
         [DataRow("33: Single 5-bit", new[] { 31 }, 0, 31)]
         [DataRow("34: Single 5-bit reduced range", new[] { 14 }, 0, 20)]
-        [DataRow("34: Single 13-bit", new[] { 14 }, 0, 8191)]
+        [DataRow("35: Single 13-bit", new[] { 14 }, 0, 8191)]
         public void RoundTrip(string caseDescription, int[] valuesToWrite, int min, int max)
         {
             var writer = new PackedByteWriter();
@@ -73,8 +73,8 @@ namespace ChessByUrl.Tests.Utils
 
 
         [TestMethod]
-        [DataRow("Mixed ranges", new[] { 0, 123, 255, 37, 260, 1, 76 }, new[] { 0, 0, 0, 0, 230, 0, 0 }, new[] { 255, 255, 255, 217, 430, 1, 120 })]
-        [DataRow("Mixed ranges", new[] { 511, 1, 0, 15, 2, 0, 60 }, new[] { 0, 0, 0, 0, 1, 0, 0 }, new[] { 511, 1, 1, 15, 14, 1, 60 })]
+        [DataRow("01: Mixed ranges", new[] { 0, 123, 255, 37, 260, 1, 76 }, new[] { 0, 0, 0, 0, 230, 0, 0 }, new[] { 255, 255, 255, 217, 430, 1, 120 })]
+        [DataRow("02: Mixed ranges", new[] { 511, 1, 0, 15, 2, 0, 60 }, new[] { 0, 0, 0, 0, 1, 0, 0 }, new[] { 511, 1, 1, 15, 14, 1, 60 })]
         public void ComplexRoundTrip(string caseDescription, int[] valuesToWrite, int[] mins, int[] maxs)
         {
             var writer = new PackedByteWriter();

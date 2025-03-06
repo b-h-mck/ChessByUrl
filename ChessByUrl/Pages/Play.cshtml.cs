@@ -25,9 +25,7 @@ namespace ChessByUrl.Pages
             }
             var moveList = parsers.ParseMoves(ruleset, initialBoard, movesString ?? "") ?? Enumerable.Empty<Move>();
 
-            // Create the initial game, then play the moves onto it
-            Game = new Game(ruleset, initialBoard);
-            Game.ApplyMoves(moveList);
+            Game = new Game(ruleset, initialBoard).ApplyMoves(moveList);
 
             // Get the current player's legal moves and generate URLs for them
             var legalMoves = Game.GetLegalMovesForPlayer(Game.CurrentPlayer);

@@ -36,26 +36,6 @@ namespace ChessByUrl.Tests.EndToEnd
         protected abstract IEnumerable<Move> MoveSequence { get; }
 
 
-        protected void AssertParserRoundTrip(Game game)
-        {
-            var rulesetString = new RulesetParser().Serialise(game.Ruleset);
-            var boardString = new StartBoardParser().Serialise(game.Ruleset, game.InitialBoard);
-            var movesString = new EnumeratedMovesParser().Serialise(game.Ruleset, game.InitialBoard, game.MovesSoFar);
-
-            Assert.IsFalse(string.IsNullOrWhiteSpace(rulesetString), "Expected non-empty ruleset string");
-            Assert.IsFalse(string.IsNullOrWhiteSpace(boardString), "Expected non-empty board string");
-            Assert.IsFalse(string.IsNullOrWhiteSpace(movesString), "Expected non-empty moves string");
-
-            var parsedRuleset = new RulesetParser().Parse(rulesetString);
-            Assert.IsNotNull(parsedRuleset, "Expected to parse ruleset");
-            var parsedBoard = new StartBoardParser().Parse(parsedRuleset, boardString);
-            Assert.IsNotNull(parsedBoard, "Expected to parse board");
-            var parsedMoves = new EnumeratedMovesParser().Parse(parsedRuleset, parsedBoard, movesString);
-            Assert.IsNotNull(parsedMoves, "Expected to parse moves");
-
-            CollectionAssert.AreEqual(game.InitialBoard, parsedBoard);
-            CollectionAssert.AreEqual(game.MovesSoFar, parsedMoves);
-        }
 
     }
 }

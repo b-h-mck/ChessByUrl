@@ -7,13 +7,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ChessByUrl.Tests.EndToEnd
+namespace ChessByUrl.Tests.EndToEnd.MoveSequenceTests
 {
     /// <summary>
     /// Tests analysing the quickest possible checkmate in chess.
     /// </summary>
     [TestClass]
-    public class FoolsMateTests : MoveSequenceTestBase
+    public class FoolsMate : MoveSequenceTestBase
     {
         protected override IEnumerable<Move> MoveSequence => [
             new Move { From = "f2", To = "f3" },
@@ -28,7 +28,7 @@ namespace ChessByUrl.Tests.EndToEnd
             (var game, var white, var black) = CreateGame(0);
 
             Assert.AreEqual(white, game.CurrentPlayer);
-            AssertParserRoundTrip(game);
+            GameAssert.ParserRoundTrip(game);
 
             // Sanity check to make sure the pieces involved are in the right place
             GameAssert.PieceAtSquare(game, "e1", white, "King");
@@ -49,7 +49,7 @@ namespace ChessByUrl.Tests.EndToEnd
         public void AfterWhitesFirstMove()
         {
             (var game, var white, var black) = CreateGame(1);
-            AssertParserRoundTrip(game);
+            GameAssert.ParserRoundTrip(game);
 
             Assert.AreEqual(black, game.CurrentPlayer);
             GameAssert.SquareEmpty(game, "f2");
@@ -61,7 +61,7 @@ namespace ChessByUrl.Tests.EndToEnd
         public void AfterBlacksFirstMove()
         {
             (var game, var white, var black) = CreateGame(2);
-            AssertParserRoundTrip(game);
+            GameAssert.ParserRoundTrip(game);
 
             Assert.AreEqual(white, game.CurrentPlayer);
             GameAssert.SquareEmpty(game, "e7");
@@ -72,7 +72,7 @@ namespace ChessByUrl.Tests.EndToEnd
         public void AfterWhitesSecondMove()
         {
             (var game, var white, var black) = CreateGame(3);
-            AssertParserRoundTrip(game);
+            GameAssert.ParserRoundTrip(game);
 
             Assert.AreEqual(black, game.CurrentPlayer);
             GameAssert.SquareEmpty(game, "g2");
@@ -84,7 +84,7 @@ namespace ChessByUrl.Tests.EndToEnd
         public void AfterBlacksCheckmatingMove()
         {
             (var game, var white, var black) = CreateGame(4);
-            AssertParserRoundTrip(game);
+            GameAssert.ParserRoundTrip(game);
 
             Assert.AreEqual(white, game.CurrentPlayer);
             Assert.AreEqual(game.GetLegalMovesForPlayer(white).Count(), 0);

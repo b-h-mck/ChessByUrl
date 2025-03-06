@@ -10,11 +10,11 @@ using ChessByUrl.Parser;
 
 namespace ChessByUrl.Tests.EndToEnd
 {
-    public abstract class GameStringsTestBase
+    public abstract class UrlStringTestBase
     {
-        protected (Game game, Player white, Player black) CreateGame(int numberOfMovesPerformed)
+        protected (Game game, Player white, Player black) CreateGame()
         {
-            var parserCollection = new ParserCollection();
+            var parserCollection = ParserCollection.Instance;
             var ruleset = parserCollection.ParseRuleset(RulesetString);
             Assert.IsNotNull(ruleset);
             var board = parserCollection.ParseBoard(ruleset, BoardString);
@@ -29,6 +29,8 @@ namespace ChessByUrl.Tests.EndToEnd
             var black = ruleset.Players.Single(p => p.Id == 1);
 
             var game = new Game(ruleset, board);
+            if (moves != null)
+                game = game.ApplyMoves(moves);
             return (game, white, black);
         }
 
