@@ -19,15 +19,15 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var pieceType = fakes.AddPieceType(0, behaviour);
 
             var actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "b2", pieceType);
-            Move[] expectedMoves = [ new Move { From = "b2", To = "b3" } ];
+            Move[] expectedMoves = [ new Move("b2", "b3") ];
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
 
             actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "c3", pieceType);
-            expectedMoves = [ new Move { From = "c3", To = "c4" } ];
+            expectedMoves = [ new Move("c3", "c4") ];
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
 
             actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "g7", pieceType);
-            expectedMoves = [ new Move { From = "g7", To = "g8" } ];
+            expectedMoves = [ new Move("g7", "g8") ];
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
         }
 
@@ -77,15 +77,15 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             fakes.Board = fakes.Board.SetCurrentPlayer(fakes.Ruleset.Players.Last());
 
             var actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "b7", pieceType);
-            Move[] expectedMoves = [ new Move { From = "b7", To = "b6" } ];
+            Move[] expectedMoves = [ new Move("b7", "b6") ];
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
 
             actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "c6", pieceType);
-            expectedMoves = [ new Move { From = "c6", To = "c5" } ];
+            expectedMoves = [ new Move("c6", "c5") ];
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
 
             actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "g2", pieceType);
-            expectedMoves = [ new Move { From = "g2", To = "g1" } ];
+            expectedMoves = [ new Move("g2", "g1") ];
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
         }
 

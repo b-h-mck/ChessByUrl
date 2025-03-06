@@ -1,4 +1,5 @@
 ﻿using ChessByUrl.Parser;
+using ChessByUrl.Rules;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace ChessByUrl.Tests.EndToEnd.UrlStringTests
     /// Tests analysing a position I came across after randomly clicking out a game, where moving Black's king from 
     /// f7-f6 seemed to make it go to f8, and other king moves also seem to make weird stuff happened.
     /// 
-    /// This turned out to be a bug in EnumeratedMovesParser.
+    /// This turned out to be a bug in EnumeratedMovesParser that has been fixed.
     /// </summary>
     [TestClass]
     public class DrunkenKing : UrlStringTestBase
@@ -26,10 +27,10 @@ namespace ChessByUrl.Tests.EndToEnd.UrlStringTests
             GameAssert.BlackToMove(game);
             GameAssert.PieceAtSquare(game, "f7", black, "King");
             GameAssert.SquareThreatened(game, "f7", black);
-            GameAssert.MoveLegal(game, new() { From = "f7", To = "f8" });
-            GameAssert.MoveLegal(game, new() { From = "f7", To = "e7" });
-            GameAssert.MoveLegal(game, new() { From = "f7", To = "e6" });
-            GameAssert.MoveLegal(game, new() { From = "f7", To = "f6" });
+            GameAssert.MoveLegal(game, new Move("f7", "f8"));
+            GameAssert.MoveLegal(game, new Move("f7", "e7"));
+            GameAssert.MoveLegal(game, new Move("f7", "e6"));
+            GameAssert.MoveLegal(game, new Move("f7", "f6"));
             Assert.AreEqual(4, game.GetLegalMovesForPlayer(black).Count());
         }
 
@@ -38,7 +39,7 @@ namespace ChessByUrl.Tests.EndToEnd.UrlStringTests
         {
             (var game, var white, var black) = CreateGame();
             GameAssert.ParserRoundTrip(game);
-            game = game.ApplyMove(new() { From = "f7", To = "f6" });
+            game = game.ApplyMove(new Move("f7", "f6"));
 
             GameAssert.ParserRoundTrip(game);
             GameAssert.WhiteToMove(game);

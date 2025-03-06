@@ -25,9 +25,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             string cornerFrom = "h8";
             Coords[] expectedCornerTos = ["f8", "h6"];
 
-            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move { From = middleFrom, To = to }).ToArray();
-            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move { From = edgeFrom, To = to }).ToArray();
-            var expectedCornerMoves = expectedCornerTos.Select(to => new Move { From = cornerFrom, To = to }).ToArray();
+            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move(middleFrom, to)).ToArray();
+            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move(edgeFrom, to)).ToArray();
+            var expectedCornerMoves = expectedCornerTos.Select(to => new Move(cornerFrom, to)).ToArray();
 
             var fakes = new Fakes();
             var pieceType = fakes.AddPieceType(0, behaviour);
@@ -45,7 +45,7 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
         [TestMethod]
         public void GetLegalMovesFrom_Diagonal()
         {
-            var behaviour = new LeaperBehaviour(2,2);
+            var behaviour = new LeaperBehaviour(2, 2);
 
             string middleFrom = "e5";
             Coords[] expectedMiddleTos = ["g7", "c7", "g3", "c3"];
@@ -57,9 +57,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             Coords[] expectedCornerTos = ["f6"];
 
 
-            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move { From = middleFrom, To = to }).ToArray();
-            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move { From = edgeFrom, To = to }).ToArray();
-            var expectedCornerMoves = expectedCornerTos.Select(to => new Move { From = cornerFrom, To = to }).ToArray();
+            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move(middleFrom, to)).ToArray();
+            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move(edgeFrom, to)).ToArray();
+            var expectedCornerMoves = expectedCornerTos.Select(to => new Move(cornerFrom, to)).ToArray();
 
             var fakes = new Fakes();
             var pieceType = fakes.AddPieceType(0, behaviour);
@@ -76,7 +76,7 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
         [TestMethod]
         public void GetLegalMovesFrom_KnightMove()
         {
-            var behaviour = new LeaperBehaviour(1,2);
+            var behaviour = new LeaperBehaviour(1, 2);
 
             string middleFrom = "e5";
             Coords[] expectedMiddleTos = ["g6", "c6", "g4", "c4", "f7", "d7", "f3", "d3"];
@@ -87,9 +87,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             string cornerFrom = "h8";
             Coords[] expectedCornerTos = ["f7", "g6"];
 
-            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move { From = middleFrom, To = to }).ToArray();
-            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move { From = edgeFrom, To = to }).ToArray();
-            var expectedCornerMoves = expectedCornerTos.Select(to => new Move { From = cornerFrom, To = to }).ToArray();
+            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move(middleFrom, to)).ToArray();
+            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move(edgeFrom, to)).ToArray();
+            var expectedCornerMoves = expectedCornerTos.Select(to => new Move(cornerFrom, to)).ToArray();
 
             var fakes = new Fakes();
             var pieceType = fakes.AddPieceType(0, behaviour);

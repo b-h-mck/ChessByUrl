@@ -32,11 +32,11 @@
                     var toPiece = game.CurrentBoard.GetPiece(to);
                     if (toPiece == null)
                     {
-                        yield return new Move { From = from, To = to };
+                        yield return new Move(from, to);
                     }
                     else if (toPiece.Player.Id != fromPiece.Player.Id)
                     {
-                        yield return new Move { From = from, To = to };
+                        yield return new Move(from, to);
                         break;
                     }
                     else

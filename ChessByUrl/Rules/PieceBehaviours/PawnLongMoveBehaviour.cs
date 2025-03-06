@@ -43,9 +43,9 @@ namespace ChessByUrl.Rules.PieceBehaviours
                 {
                     yield break;
                 }
-                
+
             }
-            yield return new Move { From = from, To = to };
+            yield return new Move(from, to);
         }
 
 

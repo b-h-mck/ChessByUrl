@@ -14,7 +14,7 @@
                     var victim = game.CurrentBoard.GetPiece(victimSquare);
                     if (victim != null && victim.Player.Id != fromPiece.Player.Id && victim.Behaviours.OfType<EnPassantVictimBehaviour>().Any())
                     {
-                        yield return new Move { From = from, To = victimSquare.WithRank(victimSquare.Rank + direction) };
+                        yield return new Move(from, victimSquare.WithRank(victimSquare.Rank + direction));
                     }
                 }
             }

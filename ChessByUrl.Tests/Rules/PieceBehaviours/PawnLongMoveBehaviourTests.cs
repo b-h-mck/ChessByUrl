@@ -30,7 +30,7 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var pieceType = fakes.AddPieceType(0, behaviour);
 
             var actualMoves = behaviour.GetLegalMovesFrom(fakes.Game, "b2", pieceType);
-            Move[] expectedMoves = { new Move { From = "b2", To = "b4" } };
+            Move[] expectedMoves = { new Move("b2", "b4") };
             CollectionAssert.AreEqual(expectedMoves, actualMoves);
         }
 
@@ -73,7 +73,7 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var originalPieceType = fakes.AddPieceType(0, behaviour);
 
             fakes.AddPieces(originalPieceType, "d2");
-            var gameAfterMove = fakes.Game.ApplyMove(new Move { From = "d2", To = "d4" });
+            var gameAfterMove = fakes.Game.ApplyMove(new Move("d2", "d4"));
             var actualPieceType = gameAfterMove.CurrentBoard.GetPiece("d4");
             Assert.IsNotNull(actualPieceType);
             Assert.AreEqual(transformPieceType.Id, actualPieceType.Id);

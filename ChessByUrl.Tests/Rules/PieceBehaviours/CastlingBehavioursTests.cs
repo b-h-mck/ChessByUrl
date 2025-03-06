@@ -51,8 +51,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
                 fakes.AddPieces(blockerPieceType, blockerCoords);
             }
 
-            if (expectCastlingAvailable) {
-                var expectedLegalMoves = new Move[] { new Move { From = "e1", To = "c1" } };
+            if (expectCastlingAvailable)
+            {
+                var expectedLegalMoves = new Move[] { new Move("e1", "c1") };
                 var actualLegalMoves = initiatorBehaviour.GetLegalMovesFrom(fakes.Game, "e1", responderTransformPieceType);
                 CollectionAssert.AreEqual(expectedLegalMoves, actualLegalMoves, $"{caseDescription}: Expected castling to be available.");
             }
@@ -85,13 +86,13 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
             var attackerPieceType = fakes.AddAttackingPieceType(1, attackedSquare);
             fakes.AddPieces(attackerPieceType, "e4");
 
-            var expectedLegalMovesCandidates = new Move[] { new Move { From = "e1", To = "c1" } };
+            var expectedLegalMovesCandidates = new Move[] { new Move("e1", "c1") };
             var legalMoveCandidates = initiatorBehaviour.GetLegalMovesFrom(fakes.Game, "e1", responderTransformPieceType);
             CollectionAssert.AreEqual(expectedLegalMovesCandidates, legalMoveCandidates, "Expected castling to be legal at Get stage (but filtered later).");
 
-            if (expectCastlingAvailable) 
+            if (expectCastlingAvailable)
             {
-                var expectedFilteredLegalMoves = new Move[] { new Move { From = "e1", To = "c1" } };
+                var expectedFilteredLegalMoves = new Move[] { new Move("e1", "c1") };
                 var actualFilteredLegalMoves = initiatorBehaviour.FilterLegalMoveCandidates(fakes.Game, "e1", initiatorPieceType, legalMoveCandidates);
                 CollectionAssert.AreEqual(expectedFilteredLegalMoves, actualFilteredLegalMoves, $"{caseDescription}: Expected castling to be available.");
             }

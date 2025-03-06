@@ -101,9 +101,8 @@ namespace ChessByUrl.Tests.Rules
 
             public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
             {
-                yield return new Move { From = from, To = _attackedSquare };
+                yield return new Move(from, _attackedSquare);
             }
-
         }
 
     }

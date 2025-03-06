@@ -18,9 +18,9 @@ namespace ChessByUrl.Rules.PieceBehaviours
             {
                 if (move.From == thisSquare && move.To.Rank == PromotionRank)
                 {
-                    foreach (PieceType promotionTarget in AvailablePromotions())
+                    for (int i = 0; i < AvailablePromotions().Count(); i++)
                     {
-                        yield return new Move { From = move.From, To = move.To, ChangeTo = promotionTarget };
+                        yield return new Move(move.From, move.To, i);
                     }
                 }
                 else

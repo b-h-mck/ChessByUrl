@@ -36,9 +36,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
                 "h7", "h6", "h5", "h4", "h3", "h2", "h1",
                 };
 
-            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move { From = middleFrom, To = to }).ToArray();
-            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move { From = edgeFrom, To = to }).ToArray();
-            var expectedCornerMoves = expectedCornerTos.Select(to => new Move { From = cornerFrom, To = to }).ToArray();
+            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move(middleFrom, to)).ToArray();
+            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move(edgeFrom, to)).ToArray();
+            var expectedCornerMoves = expectedCornerTos.Select(to => new Move(cornerFrom, to)).ToArray();
 
             var fakes = new Fakes(); //.AddPiecesWithBehaviour(0, behaviour);
             var pieceType = fakes.AddPieceType(0, behaviour);
@@ -76,9 +76,9 @@ namespace ChessByUrl.Tests.Rules.PieceBehaviours
                 "g7", "f6", "e5", "d4", "c3", "b2", "a1"
                 };
 
-            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move { From = middleFrom, To = to }).ToArray();
-            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move { From = edgeFrom, To = to }).ToArray();
-            var expectedCornerMoves = expectedCornerTos.Select(to => new Move { From = cornerFrom, To = to }).ToArray();
+            var expectedMiddleMoves = expectedMiddleTos.Select(to => new Move(middleFrom, to)).ToArray();
+            var expectedEdgeMoves = expectedEdgeTos.Select(to => new Move(edgeFrom, to)).ToArray();
+            var expectedCornerMoves = expectedCornerTos.Select(to => new Move(cornerFrom, to)).ToArray();
 
 
             var fakes = new Fakes();

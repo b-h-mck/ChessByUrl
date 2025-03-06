@@ -34,7 +34,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
             if (!AllSquaresEmptyExceptCastlers(game.CurrentBoard, from))
                 yield break;
             // Threat checking is taken care of in the filter method, to avoid stack blowout.
-            yield return new Move { From = from, To = from.WithFile(InitiatorToFile) };
+            yield return new Move(from, from.WithFile(InitiatorToFile));
         }
 
         private bool AllSquaresEmptyExceptCastlers(Board board, Coords from)

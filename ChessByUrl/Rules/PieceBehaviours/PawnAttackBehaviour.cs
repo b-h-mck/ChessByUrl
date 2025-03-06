@@ -17,7 +17,7 @@
                     var toPiece = game.CurrentBoard.GetPiece(to);
                     if (toPiece != null && toPiece.Player.Id != fromPiece.Player.Id)
                     {
-                        yield return new Move { From = from, To = to };
+                        yield return new Move(from, to);
                     }
                 }
             }

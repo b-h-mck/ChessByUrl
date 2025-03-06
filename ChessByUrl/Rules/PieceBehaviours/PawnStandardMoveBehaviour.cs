@@ -5,10 +5,9 @@
     /// </summary>
     public class PawnStandardMoveBehaviour : IGetLegalMovesBehaviour
     {
-        public PawnStandardMoveBehaviour() 
+        public PawnStandardMoveBehaviour()
         {
         }
-
 
         public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
         {
@@ -19,13 +18,12 @@
             {
                 yield break;
             }
-            
+
             var piece = game.CurrentBoard.GetPiece(to);
             if (piece == null)
             {
-                yield return new Move { From = from, To = to };
+                yield return new Move(from, to);
             }
         }
-
     }
 }

@@ -16,12 +16,12 @@ namespace ChessByUrl.Tests.EndToEnd.MoveSequenceTests
     public class FoolsEnPassant : MoveSequenceTestBase
     {
         protected override IEnumerable<Move> MoveSequence => [
-            new Move { From = "e2", To = "e4" },
-            new Move { From = "e7", To = "e6" },
-            new Move { From = "e4", To = "e5" },
-            new Move { From = "d7", To = "d5" },
-            new Move { From = "e5", To = "d6" },
-        ];
+            new Move("e2", "e4"),
+                new Move("e7", "e6"),
+                new Move("e4", "e5"),
+                new Move("d7", "d5"),
+                new Move("e5", "d6"),
+            ];
 
         [TestMethod]
         public void StartOfGame()
@@ -84,7 +84,7 @@ namespace ChessByUrl.Tests.EndToEnd.MoveSequenceTests
 
             GameAssert.PieceAtSquare(game, "e5", white, "Pawn");
             GameAssert.SquareEmpty(game, "d6");
-            GameAssert.MoveLegal(game, new Move { From = "e5", To = "d6" });
+            GameAssert.MoveLegal(game, new Move("e5", "d6"));
 
             Assert.IsFalse(game.Status.IsFinished);
         }

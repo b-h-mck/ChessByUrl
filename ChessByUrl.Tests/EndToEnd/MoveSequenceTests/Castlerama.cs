@@ -16,10 +16,10 @@ namespace ChessByUrl.Tests.EndToEnd.MoveSequenceTests
     public class Castlerama : MoveSequenceTestBase
     {
         protected override IEnumerable<Move> MoveSequence => [
-            new Move { From = "f2", To = "f3" },
-            new Move { From = "e7", To = "e6" },
-            new Move { From = "g2", To = "g4" },
-            new Move { From = "d8", To = "h4" }
+            new Move("f2", "f3"),
+            new Move("e7", "e6"),
+            new Move("g2", "g4"),
+            new Move("d8", "h4")
         ];
 
         [TestMethod]

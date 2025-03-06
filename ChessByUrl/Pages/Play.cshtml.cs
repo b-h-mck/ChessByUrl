@@ -10,7 +10,7 @@ namespace ChessByUrl.Pages
     {
         public Game? Game { get; set; }
 
-        public record MoveUrl (string To, string Url);
+        public record MoveUrl (string To, PieceType? PromotionPiece, string Url);
         public Dictionary<string, List<MoveUrl>>? LegalMoveUrlsFromSquare { get; set; }
 
         public void OnGet(string? rulesetString, string? boardString, string? movesString)
@@ -39,7 +39,7 @@ namespace ChessByUrl.Pages
                     continue;
 
                 var existingMovesFromSquare = LegalMoveUrlsFromSquare.GetValueOrDefault(move.From.ToString()) ?? new List<MoveUrl>();
-                existingMovesFromSquare.Add(new MoveUrl(move.To.ToString(), newUrl));
+                //existingMovesFromSquare.Add(new MoveUrl(move.To.ToString(), newUrl));
                 LegalMoveUrlsFromSquare[move.From.ToString()] = existingMovesFromSquare;
             }
         }
