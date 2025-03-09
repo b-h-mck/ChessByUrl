@@ -41,12 +41,24 @@
     <div id="moveList" class="widget">
         @if (Model.Game != null)
         {
-            <ul>
-                @foreach (var move in Model.Game.MovesSoFar)
+            var moves = Model.Game.MovesSoFar.ToList();
+            var gameSoFar = new Game(Model.Game.Ruleset, Model.Game.InitialBoard);
+            <table>
+                @for (int i = 0; i < moves.Count; i += 2)
                 {
-                    <li>@move.From - @move.To</li>
+                    var whiteMove = moves[i];
+                    var whiteMoveNotation = Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, whiteMove);
+                    gameSoFar = gameSoFar.ApplyMove(whiteMove);
+                    var blackMove = i + 1 < moves.Count ? moves[i + 1] : null;
+                    var blackMoveNotation = blackMove != null ? Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, blackMove) : null;
+                    gameSoFar = blackMove != null ? gameSoFar.ApplyMove(blackMove) : gameSoFar;
+                    <tr>
+                        <td>@((i / 2) + 1)</td>
+                        <td>@whiteMoveNotation</td>
+                        <td>@blackMoveNotation</td>
+                    </tr>
                 }
-            </ul>
+            </table>
         }
     </div>
 }

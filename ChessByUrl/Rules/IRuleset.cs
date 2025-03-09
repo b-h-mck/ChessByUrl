@@ -40,5 +40,7 @@
         /// </remarks>>
         MoveVariantInfo? GetMoveVariant(Board boardBeforeMove, Move move);
 
+        string GetMoveNotation(Board boardBeforeMove, Move move);
+
     }
 }

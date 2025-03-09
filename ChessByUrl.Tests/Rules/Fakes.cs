@@ -125,6 +125,11 @@ namespace ChessByUrl.Tests.Rules
             return GameStatus;
         }
 
+        public string GetMoveNotation(Board boardBeforeMove, Move move)
+        {
+            throw new NotImplementedException();
+        }
+
         public MoveVariantInfo? GetMoveVariant(Board boardBeforeMove, Move move)
         {
             return null;
