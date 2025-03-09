@@ -30,7 +30,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
         {
             if (from.Rank != _startRank)
             {
-                yield break;
+                return [];
             }
 
             var direction = _startRank < _targetRank ? 1 : -1;
@@ -41,11 +41,11 @@ namespace ChessByUrl.Rules.PieceBehaviours
                 var piece = game.CurrentBoard.GetPiece(to);
                 if (piece != null)
                 {
-                    yield break;
+                    return [];
                 }
 
             }
-            yield return new Move(from, to);
+            return [new Move(from, to)];
         }
 
 

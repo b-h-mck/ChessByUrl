@@ -21,19 +21,21 @@ namespace ChessByUrl.Rules.PieceBehaviours
 
         private IEnumerable<Coords> GetOffsets(int firstDistance, int secondDistance)
         {
-            yield return new Coords(firstDistance, secondDistance);
-            yield return new Coords(firstDistance, -secondDistance);
-            yield return new Coords(-firstDistance, secondDistance);
-            yield return new Coords(-firstDistance, -secondDistance);
-            yield return new Coords(secondDistance, firstDistance);
-            yield return new Coords(secondDistance, -firstDistance);
-            yield return new Coords(-secondDistance, firstDistance);
-            yield return new Coords(-secondDistance, -firstDistance);
+            return [
+                    new Coords(firstDistance, secondDistance),
+                    new Coords(firstDistance, -secondDistance),
+                    new Coords(-firstDistance, secondDistance),
+                    new Coords(-firstDistance, -secondDistance),
+                    new Coords(secondDistance, firstDistance),
+                    new Coords(secondDistance, -firstDistance),
+                    new Coords(-secondDistance, firstDistance),
+                    new Coords(-secondDistance, -firstDistance)
+                ];
         }
-
 
         public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
         {
+            var legalMoves = new List<Move>();
             var candidates = AllOffsets.Select(offset => from + offset);
             foreach (var to in candidates)
             {
@@ -42,11 +44,11 @@ namespace ChessByUrl.Rules.PieceBehaviours
                     var toPiece = game.CurrentBoard.GetPiece(to);
                     if (toPiece == null || toPiece?.Player.Id != fromPiece.Player.Id)
                     {
-                        yield return new Move(from, to);
+                        legalMoves.Add(new Move(from, to));
                     }
                 }
             }
+            return legalMoves;
         }
-
     }
 }

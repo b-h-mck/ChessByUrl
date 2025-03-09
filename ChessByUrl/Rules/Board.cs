@@ -57,19 +57,22 @@ namespace ChessByUrl.Rules
 
         public IEnumerable<Coords> FindSquares(Predicate<PieceType?> piecePredicate)
         {
+            var result = new List<Coords>();
             for (int rank = 0; rank < Ranks.Count; rank++)
             {
                 for (int file = 0; file < Ranks[rank].Count; file++)
                 {
                     var piece = Ranks[rank][file];
                     if (piecePredicate(piece))
-                        yield return new Coords(rank, file);
+                        result.Add(new Coords(rank, file));
                 }
             }
+            return result;
         }
 
         public IEnumerator<(Coords, PieceType?)> GetEnumerator()
         {
+            var result = new List<(Coords, PieceType?)>();
             for (int rank = 0; rank < Ranks.Count; rank++)
             {
                 for (int file = 0; file < Ranks[rank].Count; file++)
@@ -77,10 +80,11 @@ namespace ChessByUrl.Rules
                     var piece = Ranks[rank][file];
                     if (piece != null)
                     {
-                        yield return (new Coords(rank, file), piece);
+                        result.Add((new Coords(rank, file), piece));
                     }
                 }
             }
+            return result.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()

@@ -7,6 +7,7 @@
             var direction = fromPiece.Player.Direction;
             var farthestRank = fromPiece.Player.FarthestRank;
             Coords[] victimSquares = [new Coords(from.Rank, from.File + 1), new Coords(from.Rank, from.File - 1)];
+            var result = new List<Move>();
             foreach (var victimSquare in victimSquares)
             {
                 if (game.Ruleset.IsInBounds(victimSquare))
@@ -14,10 +15,11 @@
                     var victim = game.CurrentBoard.GetPiece(victimSquare);
                     if (victim != null && victim.Player.Id != fromPiece.Player.Id && victim.Behaviours.OfType<EnPassantVictimBehaviour>().Any())
                     {
-                        yield return new Move(from, victimSquare.WithRank(victimSquare.Rank + direction));
+                        result.Add(new Move(from, victimSquare.WithRank(victimSquare.Rank + direction)));
                     }
                 }
             }
+            return result;
         }
 
         public Board ApplyMoveFrom(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, PieceType fromPiece)

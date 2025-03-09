@@ -101,7 +101,7 @@ namespace ChessByUrl.Tests.Rules
 
             public IEnumerable<Move> GetLegalMovesFrom(Game game, Coords from, PieceType fromPiece)
             {
-                yield return new Move(from, _attackedSquare);
+                return [new Move(from, _attackedSquare)];
             }
         }
 
@@ -123,6 +123,11 @@ namespace ChessByUrl.Tests.Rules
         public GameStatus GetGameStatus(Game game)
         {
             return GameStatus;
+        }
+
+        public MoveVariantInfo? GetMoveVariant(Board boardBeforeMove, Move move)
+        {
+            return null;
         }
 
         public Player GetNextPlayer(Player currentPlayer)

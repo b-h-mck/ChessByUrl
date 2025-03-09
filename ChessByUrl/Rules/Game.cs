@@ -97,7 +97,7 @@
         /// </summary>
         public IEnumerable<Move> GetLegalMovesForPlayer(Player player)
         {
-            return CurrentBoard.FindSquares(piece => piece?.Player == player).SelectMany(GetLegalMovesFromSquare);
+            return CurrentBoard.FindSquares(piece => piece?.Player == player).SelectMany(GetLegalMovesFromSquare).ToList();
         }
 
         /// <summary>
@@ -111,9 +111,9 @@
         /// </remarks>
         public IEnumerable<Move> GetThreats(Coords target, Player threatenedPlayer)
         {
-            return CurrentBoard.FindSquares(piece => piece?.Player != threatenedPlayer)
+            return CurrentBoard.FindSquares(piece => piece != null && piece.Player != threatenedPlayer)
                 .SelectMany(coords => GetUnfilteredLegalMoveCandidates(coords))
-                .Where(move => move.To == target);
+                .Where(move => move.To == target).ToList();
         }
 
 

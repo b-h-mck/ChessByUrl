@@ -16,14 +16,15 @@
             var to = new Coords(from.Rank + direction, from.File);
             if (!game.Ruleset.IsInBounds(to))
             {
-                yield break;
+                return [];
             }
 
             var piece = game.CurrentBoard.GetPiece(to);
             if (piece == null)
             {
-                yield return new Move(from, to);
+                return [new Move(from, to)];
             }
+            return [];
         }
     }
 }

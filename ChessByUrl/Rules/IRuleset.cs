@@ -31,5 +31,14 @@
         /// </summary>
         Player GetNextPlayer(Player currentPlayer);
 
+        /// <summary>
+        /// Returns information about the given move's variant (e.g. promotion piece). null if move.Variant is null.
+        /// </summary>
+        /// <remarks>
+        /// IPieceBehaviours are responsible for creating variants, and doing what's neceesary to apply the variant when applying the move.
+        /// This method is used by the UI to help the user select a variant.
+        /// </remarks>>
+        MoveVariantInfo? GetMoveVariant(Board boardBeforeMove, Move move);
+
     }
 }

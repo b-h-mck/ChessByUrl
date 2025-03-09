@@ -58,5 +58,46 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
         {
             return OrthodoxPlayers.All.First(player => player.Id != currentPlayer.Id);
         }
+
+        public MoveVariantInfo? GetMoveVariant(Board boardBeforeMove, Move move)
+        {
+            var promotionVariant = GetPawnPromotionVariant(boardBeforeMove, move);
+            return promotionVariant;
+        }
+
+        private MoveVariantInfo? GetPawnPromotionVariant(Board boardBeforeMove, Move move)
+        {
+            if (move.Variant == null)
+                return null;
+            var pieceType = boardBeforeMove.GetPiece(move.From);
+            if (pieceType == null)
+                return null;
+            var player = pieceType.Player;
+            var pieceSet = OrthodoxPieceTypes.Player(player.Id);
+            if (pieceType != pieceSet.Pawn)
+                return null;
+            if (move.To.Rank != player.FarthestRank)
+                return null;
+
+            var promotionPiece = move.Variant switch
+            {
+                0 => pieceSet.Queen,
+                1 => pieceSet.Rook,
+                2 => pieceSet.Bishop,
+                3 => pieceSet.Knight,
+                _ => null
+            };
+
+            if (promotionPiece == null)
+                return null;
+
+            return new MoveVariantInfo
+            {
+                VariantNumber = move.Variant.Value,
+                VariantName = $"Promote to {promotionPiece.Name}",
+                Unicode = promotionPiece.Unicode,
+                SvgFileName = promotionPiece.SvgFileName
+            };
+        }
     }
 }

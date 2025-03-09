@@ -29,12 +29,12 @@ namespace ChessByUrl.Rules.PieceBehaviours
             var responder = game.CurrentBoard.GetPiece(from.WithFile(ResponderFromFile));
             if (responder == null || responder.Player.Id != fromPiece.Player.Id || !responder.Behaviours.OfType<CastlingResponderBehaviour>().Any())
             {
-                yield break;
+                return [];
             }
             if (!AllSquaresEmptyExceptCastlers(game.CurrentBoard, from))
-                yield break;
+                return [];
             // Threat checking is taken care of in the filter method, to avoid stack blowout.
-            yield return new Move(from, from.WithFile(InitiatorToFile));
+            return [new Move(from, from.WithFile(InitiatorToFile))];
         }
 
         private bool AllSquaresEmptyExceptCastlers(Board board, Coords from)
@@ -65,6 +65,7 @@ namespace ChessByUrl.Rules.PieceBehaviours
 
         public IEnumerable<Move> FilterLegalMoveCandidates(Game game, Coords thisSquare, PieceType thisPiece, IEnumerable<Move> candidates)
         {
+            var result = new List<Move>();
             foreach (var move in candidates)
             {
                 if (move.From == thisSquare && IsCastle(move))
@@ -72,8 +73,9 @@ namespace ChessByUrl.Rules.PieceBehaviours
                     if (AnyThreatenedSquaresOnInitiatorRoute(game, thisSquare, thisPiece.Player))
                         continue;
                 }
-                yield return move;
+                result.Add(move);
             }
+            return result;
         }
 
 

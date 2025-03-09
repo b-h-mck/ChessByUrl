@@ -13,7 +13,7 @@
 
         public required IEnumerable<IPieceBehaviour> Behaviours { get; init; }
 
-        public override string ToString() => $"{Id} {Description}";
+        public override string ToString() => $"{Id} - {Player.Name} {Description}";
 
     }
 }

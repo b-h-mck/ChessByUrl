@@ -10,6 +10,7 @@
             var direction = fromPiece.Player.Direction;
             var farthestRank = fromPiece.Player.FarthestRank;
             Coords[] captureSquares = [new Coords(from.Rank + direction, from.File + 1), new Coords(from.Rank + direction, from.File - 1)];
+            var result = new List<Move>();
             foreach (var to in captureSquares)
             {
                 if (game.Ruleset.IsInBounds(to))
@@ -17,10 +18,11 @@
                     var toPiece = game.CurrentBoard.GetPiece(to);
                     if (toPiece != null && toPiece.Player.Id != fromPiece.Player.Id)
                     {
-                        yield return new Move(from, to);
+                        result.Add(new Move(from, to));
                     }
                 }
             }
+            return result;
         }
 
     }

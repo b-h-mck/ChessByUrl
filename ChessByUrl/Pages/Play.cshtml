@@ -5,7 +5,7 @@
 
 @section WidgetPanel
 {
-    <div id="promotion-selector" class="widget">
+    <div id="promotions" class="widget">
     </div>
     <div class="widget">
         @if (Model.Game != null)
@@ -52,7 +52,7 @@
 }
 
 <div class="board-wrapper">
-    @if (Model.Game?.CurrentBoard != null && Model.LegalMoveUrlsFromSquare != null)
+    @if (Model.Game?.CurrentBoard != null && Model.MovesFromSquare != null)
     {
         <table class="board showMoveFrom">
             <tr>
@@ -71,15 +71,15 @@
                     {
                         var coords = new Coords(rank, file);
                         var piece = Model.Game.CurrentBoard.Ranks[rank][file];
-                        var legalMoves = Model.LegalMoveUrlsFromSquare.GetValueOrDefault(coords.ToString()) ?? [];
+                        var movesFrom = Model.MovesFromSquare.GetValueOrDefault(coords.ToString()) ?? [];
 
                         var squareClass = "square";
                         squareClass += (rank + file) % 2 == 0 ? " light" : " dark";
-                        squareClass += (legalMoves.Any()) ? " moveFrom" : "";
+                        squareClass += (movesFrom.Any()) ? " moveFrom" : "";
 
                         <td class="@squareClass" onclick="onSquareClick(this)" 
-                            data-coords="@coords.ToString()" 
-                            data-legalmoves="@JsonSerializer.Serialize(legalMoves)">
+                            data-coords="@coords.ToString()"
+                            data-moveFrom="@JsonSerializer.Serialize(movesFrom)">
                             @if (piece != null)
                             {
                                 <img src="/images/@piece.SvgFileName" alt="@piece.Name" />

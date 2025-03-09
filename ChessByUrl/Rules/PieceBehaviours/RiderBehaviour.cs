@@ -23,6 +23,7 @@
             // Find the first leaps for the inner leaper, then for each of them continue in the same direction
             // until we hit something.
             var firstLeaps = InitialLeaper.GetLegalMovesFrom(game, from, fromPiece);
+            var result = new List<Move>();
             foreach (var firstLeap in firstLeaps)
             {
                 var to = firstLeap.To;
@@ -32,11 +33,11 @@
                     var toPiece = game.CurrentBoard.GetPiece(to);
                     if (toPiece == null)
                     {
-                        yield return new Move(from, to);
+                        result.Add(new Move(from, to));
                     }
                     else if (toPiece.Player.Id != fromPiece.Player.Id)
                     {
-                        yield return new Move(from, to);
+                        result.Add(new Move(from, to));
                         break;
                     }
                     else
@@ -47,6 +48,7 @@
                     to += offset;
                 }
             }
+            return result;
         }
 
     }
