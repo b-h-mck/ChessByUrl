@@ -1,0 +1,34 @@
+﻿.widget.hidden {
+    visibility: hidden;
+}
+
+
+#promotions {
+    display: table;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+    #promotions .promotionSelection {
+        display: table-cell;
+        width: 25%;
+        aspect-ratio: 1/1;
+        border: 1px solid black;
+        flex: auto;
+        position: relative;
+    }
+
+    #promotions .promotionSelection img {
+        width: 100%;
+        height: 100%;
+    }
+
+
+#moveList table {
+    width: 100%;
+}
+
+#moveList table tr td {
+    width: 40%;
+}

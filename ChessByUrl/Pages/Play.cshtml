@@ -1,11 +1,26 @@
 ﻿@page "/play/{rulesetString?}/{boardString?}/{movesString?}"
 @using System.Text.Json
 @using ChessByUrl.Rules
+@using ChessByUrl.Rules.Rulesets.Orthodox
 @model PlayModel
 
 @section WidgetPanel
 {
-    <div id="promotions" class="widget">
+    <div id="promotions" class="widget hidden">
+        <h3>Select a promotion</h3>
+        @if (Model.Game != null)
+        {
+            var pieceSet = OrthodoxPieceTypes.Player(Model.Game.CurrentPlayer.Id);
+            PieceType[] promotionPieceTypes = [pieceSet.Queen, pieceSet.Rook, pieceSet.Bishop, pieceSet.Knight];
+            <div>
+                @for (int i = 0; i < promotionPieceTypes.Length; i++)
+                {
+                    <div class="promotionSelection" data-variant="i">
+                        <img src="/images/@promotionPieceTypes[i].SvgFileName" alt="@promotionPieceTypes[i].Name" onclick="onPromotionClick(i)" />
+                    </div>
+                }
+            </div>
+        }
     </div>
     <div class="widget">
         @if (Model.Game != null)
@@ -13,7 +28,7 @@
             var status = Model.Game.Status;
             if (status.IsFinished)
             {
-                <div>Game Over!</div>
+                <h3>Game Over!</h3>
                 @if (status.PlayerPoints != null)
                 {
                     var pointStrings = status.PlayerPoints.OrderBy(p => p.player.Id).Select(p => p.points == 0.5m ? "1/2" : p.points.ToString()).ToArray();
@@ -27,11 +42,11 @@
                     {
                         if (player == null)
                         {
-                            <div>@char.ToUpper(statusString[0]) + statusString.Substring(1).</div>
+                            <h4>@char.ToUpper(statusString[0]) + statusString.Substring(1).</h4>
                         }
                         else
                         {
-                            <div>@($"{player.Name} {statusString}.")</div>
+                            <h4>@($"{player.Name} {statusString}.")</h4>
                         }
                     }
                 }
@@ -43,22 +58,31 @@
         {
             var moves = Model.Game.MovesSoFar.ToList();
             var gameSoFar = new Game(Model.Game.Ruleset, Model.Game.InitialBoard);
-            <table>
-                @for (int i = 0; i < moves.Count; i += 2)
-                {
-                    var whiteMove = moves[i];
-                    var whiteMoveNotation = Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, whiteMove);
-                    gameSoFar = gameSoFar.ApplyMove(whiteMove);
-                    var blackMove = i + 1 < moves.Count ? moves[i + 1] : null;
-                    var blackMoveNotation = blackMove != null ? Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, blackMove) : null;
-                    gameSoFar = blackMove != null ? gameSoFar.ApplyMove(blackMove) : gameSoFar;
+            if (moves.Count > 0)
+            {
+                <h3>Moves</h3>
+                <table>
                     <tr>
-                        <td>@((i / 2) + 1)</td>
-                        <td>@whiteMoveNotation</td>
-                        <td>@blackMoveNotation</td>
+                        <th></th>
+                        <th>White</th>
+                        <th>Black</th>
                     </tr>
-                }
-            </table>
+                    @for (int i = 0; i < moves.Count; i += 2)
+                    {
+                        var whiteMove = moves[i];
+                        var whiteMoveNotation = Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, whiteMove);
+                        gameSoFar = gameSoFar.ApplyMove(whiteMove);
+                        var blackMove = i + 1 < moves.Count ? moves[i + 1] : null;
+                        var blackMoveNotation = blackMove != null ? Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, blackMove) : null;
+                        gameSoFar = blackMove != null ? gameSoFar.ApplyMove(blackMove) : gameSoFar;
+                        <tr>
+                            <th>@((i / 2) + 1)</th>
+                            <td>@whiteMoveNotation</td>
+                            <td>@blackMoveNotation</td>
+                        </tr>
+                    }
+                </table>
+            }
         }
     </div>
 }

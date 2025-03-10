@@ -10,7 +10,7 @@
 
     if (isMoveTo) {
         var moveTo = JSON.parse(square.getAttribute('data-moveTo'));
-        handleMoveTo(square, moveTo);
+        handleMoveTo(board, square, moveTo);
     } else if (!anySelected && isMoveFrom) {
         var movesFrom = JSON.parse(square.getAttribute('data-moveFrom'));
         handleMoveFrom(board, square, coords, movesFrom);
@@ -42,27 +42,42 @@ function handleUnselect(board) {
     board.classList.add('showMoveFrom');
 
     board.querySelectorAll('.square').forEach(e => {
-        e.classList.remove('selected', 'moveTo');
+        e.classList.remove('selected', 'secondarySelected', 'moveTo');
         e.removeAttribute('data-moveTo');
-        document.getElementById('promotions').innerHTML = ''
     });
+
+    var promotionsElement = document.getElementById('promotions');
+    Array.from(promotionsElement.children[1].children).forEach(e => e.onclick = null);
+    promotionsElement.classList.add('hidden');
 }
 
-function handleMoveTo(square, moveTo) {
+function handleMoveTo(board, square, moveTo) {
     console.log("handleMoveTo", square, moveTo);
+    // If we've got a URL (i.e. no variants), redirect to it.
     if (moveTo.Url) {
         window.location.href = moveTo.Url;
+        return;
     }
-    else if (moveTo.Variants.length > 0) {
-        // show variants
-        var promotionsElement = document.getElementById('promotions');
-        promotionsElement.innerHTML = '';
-        moveTo.Variants.forEach(variant => {
-            var a = document.createElement('a');
-            a.href = variant.Url;
-            a.innerText = variant.VariantInfo.VariantName;
-            promotionsElement.appendChild(a);
-            promotionsElement.appendChild(document.createElement('br'));
-        });
+
+    // Show the variants in the promotions panel.
+    board.classList.remove('showMoveTo');
+    square.classList.add('secondarySelected');
+    var promotionsElement = document.getElementById('promotions');
+    promotionsElement.classList.remove('hidden');
+    for (i = 0; i < moveTo.Variants.length; i++) {
+        let variant = moveTo.Variants[i];
+        let promotionElement = promotionsElement.children[1].children[i];
+        promotionElement.onclick = function() {
+            window.location.href = variant.Url;
+        };
     }
+    //moveTo.Variants.forEach(variant => {
+    //promotionsElement.innerHTML = '';
+    //moveTo.Variants.forEach(variant => {
+    //    var a = document.createElement('a');
+    //    a.href = variant.Url;
+    //    a.innerText = variant.VariantInfo.VariantName;
+    //    promotionsElement.appendChild(a);
+    //    promotionsElement.appendChild(document.createElement('br'));
+    //});
 }

@@ -21,16 +21,21 @@ html, body {
     min-height: 0;
     min-width: 0;
     position: relative;
+    aspect-ratio: 1/1;
 }
 
 .widget-panel {
-    flex: 0 0 200px;
+   /* flex: 0 0 200px;*/
+    padding: 10px;
     min-height: 200px;
     min-width: 200px;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
+ /*   flex-wrap: wrap;*/
+    justify-content: left;
+}
+
+.widget {
+    padding: 10px;
 }
 
 /* Wide screen */
@@ -40,12 +45,15 @@ html, body {
     }
 
     .main-panel {
-        height: 100%;
+        width: 75vw;
+        max-width: 100vh;
     }
 
     .widget-panel {
         height: 100%;
-        flex-direction: column; /* List widgets top-to-bottom */
+        width: 25vw;
+        max-width: 50vh;
+        flex-direction: column;
     }
 }
 
@@ -60,7 +68,8 @@ html, body {
     }
 
     .widget-panel {
-        width: 100%;
+        height: calc(95vh - 210px);
+        max-height: 100vw;
         flex-direction: row; /* List widgets horizontally */
     }
 }
