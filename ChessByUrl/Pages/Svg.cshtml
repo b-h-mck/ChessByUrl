@@ -1,4 +1,4 @@
-﻿@page "/svg/{ruleset?}/{state?}/{moves?}"
+﻿@page "/svg/{rulesetString?}/{boardString?}/{movesString?}"
 @model SvgModel
 
 @{
@@ -6,23 +6,22 @@
     Response.ContentType = "image/svg+xml";
 }
 
-
-<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
-    @if (Model.Board != null)
+<svg width="600" height="600" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    @if (Model.Game != null)
     {
-        for (int rank = 0; rank < Model.Board.Ranks.Count; rank++)
+        for (int rank = 0; rank < Model.Game.CurrentBoard.Ranks.Count; rank++)
         {
-            for (int file = 0; file < Model.Board.Ranks[rank].Count; file++)
+            for (int file = 0; file < Model.Game.CurrentBoard.Ranks[rank].Count; file++)
             {
                 var x = file * 10;
-                var y = rank * 10;
+                var y = (8 - rank) * 10;
                 var fillColor = (rank + file) % 2 == 0 ? "lightgray" : "darkgray";
-                var piece = Model.Board.Ranks[rank][file];
+                var piece = Model.Game.CurrentBoard.Ranks[rank][file];
                 <rect x="@x" y="@y" width="10" height="10" fill="@fillColor" stroke="black"></rect>
-                @if (piece != null)
+                @if (piece != null && Model.SvgContents.TryGetValue(piece.SvgFileName, out var svgContent))
                 {
-                    <g>
-                        <text x="@(x + 5)" y="@(y + 6)" font-size="7" fill="black" text-anchor="middle" dominant-baseline="middle" pointer-events="none">@piece.Unicode</text>
+                    <g transform="translate(@x, @y) scale(0.2222)">
+                        @Html.Raw(svgContent)
                     </g>
                 }
             }

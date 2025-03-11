@@ -71,13 +71,4 @@ function handleMoveTo(board, square, moveTo) {
             window.location.href = variant.Url;
         };
     }
-    //moveTo.Variants.forEach(variant => {
-    //promotionsElement.innerHTML = '';
-    //moveTo.Variants.forEach(variant => {
-    //    var a = document.createElement('a');
-    //    a.href = variant.Url;
-    //    a.innerText = variant.VariantInfo.VariantName;
-    //    promotionsElement.appendChild(a);
-    //    promotionsElement.appendChild(document.createElement('br'));
-    //});
 }

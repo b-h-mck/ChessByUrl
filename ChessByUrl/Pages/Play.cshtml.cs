@@ -9,6 +9,11 @@ namespace ChessByUrl.Pages
 {
     public class PlayModel : PageModel
     {
+
+        public string? RulesetString { get; set; }
+        public string? BoardString { get; set; }
+        public string? MovesString { get; set; }
+
         public Game? Game { get; set; }
 
 
@@ -40,6 +45,10 @@ namespace ChessByUrl.Pages
 
         public void OnGet(string? rulesetString, string? boardString, string? movesString)
         {
+            RulesetString = rulesetString;
+            BoardString = boardString;
+            MovesString = movesString;
+
             // Parse the strings
             var parsers = ParserCollection.Instance;
             var ruleset = parsers.ParseRuleset(rulesetString ?? "");
