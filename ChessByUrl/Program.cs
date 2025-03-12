@@ -19,10 +19,10 @@ app.UseRouting();
 
 app.UseAuthorization();
 
-app.MapGet("/{ruleset}/{state}/{moves}/api", (string ruleset, string state, string moves) =>
+app.MapGet("/api/{ruleset}/{board}/{moves}/", (string ruleset, string board, string moves) =>
 {
     // Your logic to return JSON data
-    return Results.Json(new { ruleset, state, moves });
+    return Results.Json(new { ruleset, board, moves });
 });
 
 app.MapStaticAssets();

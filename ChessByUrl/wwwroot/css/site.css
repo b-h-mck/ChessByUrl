@@ -69,6 +69,7 @@ html, body {
 
     .widget-panel {
         height: calc(95vh - 210px);
+        height: 25vh;
         max-height: 100vw;
         flex-direction: row; /* List widgets horizontally */
     }

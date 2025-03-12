@@ -11,6 +11,11 @@
         IEnumerable<Player> Players { get; }
 
         /// <summary>
+        /// Returns the next player when the given player finishes their turn.
+        /// </summary>
+        Player GetNextPlayer(Player currentPlayer);
+
+        /// <summary>
         /// All the unique pieces in the game, across all players, and including stateful pseudo-pieces. 
         /// Examples include "White King", "Black Bishop", "White Rook with castling rights", "Black pawn vulnerable to en passant".
         /// </summary>
@@ -25,11 +30,6 @@
         /// Returns the status of the given board (check, checkmate, stalemate, etc).
         /// </summary>
         GameStatus GetGameStatus(Game game);
-
-        /// <summary>
-        /// Returns the next player when the given player finishes their turn.
-        /// </summary>
-        Player GetNextPlayer(Player currentPlayer);
 
         /// <summary>
         /// Returns information about the given move's variant (e.g. promotion piece). null if move.Variant is null.
