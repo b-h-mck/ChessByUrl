@@ -50,10 +50,7 @@ changes, please open an issue first so we can discuss the best way to approach i
 
 ## Credits
 Chess piece SVGs were sourced from [Wikimedia Commons](https://commons.wikimedia.org/wiki/Category:SVG_chess_pieces) and
-are used under the BSD 3-Clause License. See the [LICENSE-SVG.md](LICENSE-SVG.md) file for details.
+are used under the [BSD 3-Clause License](ChessByUrl/wwwroot/images/LICENSE.txt).
 
 ## Licence
-This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
-
-Chess piece SVGs are licensed under the BSD 3-Clause License - see the [ChessByUrl/wwwroot/images/LICENSE.txt](LICENSE-SVG.md) 
-file for details.
+This project is licensed under the [MIT License](LICENSE.txt).
