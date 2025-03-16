@@ -70,4 +70,7 @@ namespace ChessByUrl.Rules
         Board AdjustBoardAfterMove(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, Coords thisSquare, PieceType thisPiece);
     }
 
+
+    /// <summary>
+
 }
