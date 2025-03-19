@@ -1,13 +1,19 @@
 ﻿.widget.hidden {
-    visibility: hidden;
+    /*visibility: hidden;*/
+    display: none !important;
 }
 
 
+#gameInfo {
+    height: 8em;
+    min-width: 10em;
+    flex: 0 1 auto;
+    overflow: auto;
+}
+
 #promotions {
     display: table;
-    flex-direction: row;
     flex-wrap: wrap;
-    width: 100%;
 }
 
     #promotions .promotionSelection {
@@ -24,11 +30,36 @@
         height: 100%;
     }
 
-
-#moveList table {
+#moveList {
+    flex: 1 1 auto;
+    overflow: auto;
+    width: 15em;
+}
+    #moveList table {
     width: 100%;
 }
 
 #moveList table tr td {
     width: 40%;
 }
+
+
+#controlList {
+    max-width: 25em;
+}
+
+    #controlList .control {
+        padding: 1px;
+        border-top: 1px solid black;
+        display: flex;
+        flex-direction: row;
+    }
+
+    #controlList .control .description {
+        flex-basis: 100%;
+    }
+
+    #controlList .control .btn {
+        white-space: nowrap;
+    }
+

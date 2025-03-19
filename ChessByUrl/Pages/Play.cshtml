@@ -6,23 +6,7 @@
 
 @section WidgetPanel
 {
-    <div id="promotions" class="widget hidden">
-        <h3>Select a promotion</h3>
-        @if (Model.Game != null)
-        {
-            var pieceSet = OrthodoxPieceTypes.Player(Model.Game.CurrentPlayer.Id);
-            PieceType[] promotionPieceTypes = [pieceSet.Queen, pieceSet.Rook, pieceSet.Bishop, pieceSet.Knight];
-            <div>
-                @for (int i = 0; i < promotionPieceTypes.Length; i++)
-                {
-                    <div class="promotionSelection" data-variant="i">
-                        <img src="/images/@promotionPieceTypes[i].SvgFileName" alt="@promotionPieceTypes[i].Name" onclick="onPromotionClick(i)" />
-                    </div>
-                }
-            </div>
-        }
-    </div>
-    <div class="widget">
+    <div id="gameInfo" class="widget">
         @if (Model.Game != null)
         {
             var status = Model.Game.Status;
@@ -42,13 +26,29 @@
                     {
                         if (player == null)
                         {
-                            <h4>@char.ToUpper(statusString[0]) + statusString.Substring(1).</h4>
+                            <p>@char.ToUpper(statusString[0]) + statusString.Substring(1).</p>
                         }
                         else
                         {
-                            <h4>@($"{player.Name} {statusString}.")</h4>
+                            <p>@($"{player.Name} {statusString}.")</p>
                         }
                     }
+                }
+            </div>
+        }
+    </div>
+    <div id="promotions" class="widget start-align hidden">
+        <h4>Promote to</h4>
+        @if (Model.Game != null)
+        {
+            var pieceSet = OrthodoxPieceTypes.Player(Model.Game.CurrentPlayer.Id);
+            PieceType[] promotionPieceTypes = [pieceSet.Queen, pieceSet.Rook, pieceSet.Bishop, pieceSet.Knight];
+            <div>
+                @for (int i = 0; i < promotionPieceTypes.Length; i++)
+                {
+                    <div class="promotionSelection" data-variant="i">
+                        <img src="/images/@promotionPieceTypes[i].SvgFileName" alt="@promotionPieceTypes[i].Name" onclick="onPromotionClick(i)" />
+                    </div>
                 }
             </div>
         }
@@ -60,33 +60,46 @@
             var gameSoFar = new Game(Model.Game.Ruleset, Model.Game.InitialBoard);
             if (moves.Count > 0)
             {
-                <h3>Moves</h3>
                 <table>
                     <tr>
                         <th></th>
                         <th>White</th>
                         <th>Black</th>
                     </tr>
-                    @for (int i = 0; i < moves.Count; i += 2)
+                    @foreach (var notation in Model.GetMoveNotations())
                     {
-                        var whiteMove = moves[i];
-                        var whiteMoveNotation = Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, whiteMove);
-                        gameSoFar = gameSoFar.ApplyMove(whiteMove);
-                        var blackMove = i + 1 < moves.Count ? moves[i + 1] : null;
-                        var blackMoveNotation = blackMove != null ? Model.Game.Ruleset.GetMoveNotation(gameSoFar.CurrentBoard, blackMove) : null;
-                        gameSoFar = blackMove != null ? gameSoFar.ApplyMove(blackMove) : gameSoFar;
                         <tr>
-                            <th>@((i / 2) + 1)</th>
-                            <td>@whiteMoveNotation</td>
-                            <td>@blackMoveNotation</td>
+                            <th>@notation.MoveNumber</th>
+                            <td>@notation.WhiteHalfMove</td>
+                            <td>@notation.BlackHalfMove</td>
                         </tr>
                     }
                 </table>
             }
         }
     </div>
-    <div>
-        <a href="@($"/svg/{Model.RulesetString}/{Model.BoardString}/{Model.MovesString}")">View SVG</a>
+    <div id="controlList" class="widget">
+        <h4>Share</h4>
+        <div class="control">
+            <div class="description">Linked image</div>
+            <div><a class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText('@Model.GetLinkedImageHtml()')">Copy HTML</a></div>
+            <div><a class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText('@Model.GetLinkedImageMarkdown()')">Copy Markdown</a></div>
+        </div>
+        <div class="control">
+            <div class="description">Image only</div>
+            <div><a class="btn btn-success btn-sm" href="@Model.GetCurrentPositionUrl("svg")">View</a></div>
+            <div><a class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText('@Model.GetCurrentPositionUrl("svg")')">Copy URL</a></div>
+        </div>
+        <div class="control">
+            <div class="description">Restart game</div>
+            <div><a class="btn btn-success btn-sm" href="@Model.GetRestartGameUrl()">View</a></div>
+            <div><a class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText('@Model.GetRestartGameUrl()')">Copy URL</a></div>
+        </div>
+        <div class="control">
+            <div class="description">Set restart point</div>
+            <div><a class="btn btn-success btn-sm" href="@Model.GetRestartFromThisPositionUrl()">View</a></div>
+            <div><a class="btn btn-primary btn-sm" onclick="navigator.clipboard.writeText('@Model.GetRestartFromThisPositionUrl()')">Copy URL</a></div>
+        </div>
     </div>
 }
 
@@ -116,7 +129,7 @@
                         squareClass += (rank + file) % 2 == 0 ? " light" : " dark";
                         squareClass += (movesFrom.Any()) ? " moveFrom" : "";
 
-                        <td class="@squareClass" onclick="onSquareClick(this)" 
+                        <td class="@squareClass" onclick="onSquareClick(this)"
                             data-coords="@coords.ToString()"
                             data-moveFrom="@JsonSerializer.Serialize(movesFrom)">
                             @if (piece != null)

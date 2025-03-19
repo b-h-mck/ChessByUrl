@@ -3,7 +3,9 @@ using ChessByUrl.Rules;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Reflection;
 using System.Security;
+using System.Text.Encodings.Web;
 
 namespace ChessByUrl.Pages
 {
@@ -99,5 +101,89 @@ namespace ChessByUrl.Pages
             }
         }
 
+        public string GetLinkedImageHtml()
+        {
+            var svgUrl = GetCurrentPositionUrl("svg");
+            var playUrl = GetCurrentPositionUrl("play");
+            var html = $@"<a href=\x27{playUrl}\x27><img src=\x27{svgUrl}\x27 /></a>";
+            return html;
+        }
+
+        public string GetLinkedImageMarkdown()
+        {
+            var svgUrl = GetCurrentPositionUrl("svg");
+            var playUrl = GetCurrentPositionUrl("play");
+            var markdown = $"[![Current position]({svgUrl})]({playUrl})";
+            return markdown;
+        }
+
+        public string? GetCurrentPositionUrl(string urlAction)
+        {
+            urlAction = urlAction.StartsWith("/") ? urlAction : "/" + urlAction;
+            return Url.Page(urlAction, new { rulesetString = RulesetString, boardString = BoardString, movesString = MovesString });
+        }
+
+        public string? GetRestartGameUrl()
+        {
+            if (RulesetString == null || BoardString == null)
+                return null;
+            var result = Url.Page("/Play", new { rulesetString = RulesetString, boardString = BoardString, movesString = "" });
+            return result;
+        }
+
+        public string? GetRestartFromThisPositionUrl()
+        {
+            if (RulesetString == null || Game == null)
+                return null;
+            var newBoardString = ParserCollection.Instance.SerialiseBoard(Game.Ruleset, Game.CurrentBoard);
+            return Url.Page("/Play", new { rulesetString = RulesetString, boardString = newBoardString });
+        }
+
+
+        public class MoveNotation
+        {
+            public required int MoveNumber { get; init; }
+            public required string WhiteHalfMove { get; init; }
+            public required string BlackHalfMove { get; init; }
+        }
+
+        public IEnumerable<MoveNotation> GetMoveNotations()
+        {
+            if (Game == null)
+                return Enumerable.Empty<MoveNotation>();
+            var result = new List<MoveNotation>();
+            var currentFullMoveNumber = 1;
+            string currentWhiteMove = "...", currentBlackMove = "";
+            var currentGame = new Game(Game.Ruleset, Game.InitialBoard);
+            var moves = Game.MovesSoFar.ToList();
+            for (int i = 0; i < moves.Count; i++)
+            {
+                var currentMove = Game.Ruleset.GetMoveNotation(currentGame.CurrentBoard, moves[i]);
+                if (currentGame.CurrentPlayer.Name == "White")
+                {
+                    currentWhiteMove = currentMove;
+                }
+                else
+                {
+                    currentBlackMove = currentMove;
+                }
+
+                if (currentGame.CurrentPlayer.Name == "Black" || i == moves.Count - 1)
+                {
+                    result.Add(new MoveNotation
+                    {
+                        MoveNumber = currentFullMoveNumber,
+                        WhiteHalfMove = currentWhiteMove,
+                        BlackHalfMove = currentBlackMove
+                    });
+                    currentFullMoveNumber++;
+                    currentWhiteMove = currentBlackMove = "";
+                }
+
+                currentGame = currentGame.ApplyMove(moves[i]);
+            }
+            return result;
+
+        }
     }
 }

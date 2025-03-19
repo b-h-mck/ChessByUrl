@@ -38,6 +38,7 @@ html, body {
     padding: 10px;
 }
 
+
 /* Wide screen */
 @media (min-aspect-ratio: 1/1) {
     .panel-container {
@@ -47,12 +48,17 @@ html, body {
     .main-panel {
         width: 75vw;
         max-width: 100vh;
+        flex-basis: 100%;
     }
 
     .widget-panel {
         height: 100%;
-        width: 25vw;
-        max-width: 50vh;
+        width: 100%;
+        min-width: 200px;
+        flex-direction: column;
+    }
+
+    .widget {
         flex-direction: column;
     }
 }
@@ -72,6 +78,10 @@ html, body {
         height: 25vh;
         max-height: 100vw;
         flex-direction: row; /* List widgets horizontally */
+    }
+
+    .widget {
+        flex-direction: row;
     }
 }
 
@@ -125,3 +135,20 @@ html, body {
 .accordion-body {
     width: 100%;
 }
+
+#bottomBanner ul {
+    display: flex;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.6em;
+    justify-content: center;
+}
+
+    #bottomBanner ul li {
+        margin-right: 15px;
+    }
+
+        #bottomBanner ul li a {
+            text-decoration: none;
+        }

@@ -18,6 +18,19 @@
         </main>
         <aside class="widget-panel">
             @RenderSection("WidgetPanel", required: false)
+            <div id="bottomBanner">
+                <ul>
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/b-h-mck/ChessByUrl">Github</a>
+                    </li>
+                    <li>
+                        &copy; @DateTime.Now.Year ChessByURL. Licensed under the <a href="https://github.com/b-h-mck/ChessByUrl/blob/main/LICENSE.txt">MIT License</a>.
+                    </li>
+                </ul>
+            </div>
         </aside>
     </div>
 
