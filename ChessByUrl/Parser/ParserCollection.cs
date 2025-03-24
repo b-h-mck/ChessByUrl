@@ -95,7 +95,7 @@ namespace ChessByUrl.Parser
                     _instance = new ParserCollection();
                     _instance.AddRulesetParser(new Orthodox.RulesetParser());
                     _instance.AddBoardParser(new Orthodox.StartBoardParser());
-                    _instance.AddBoardParser(new Orthodox.CustomBoardParser());
+                    _instance.AddBoardParser(new Orthodox.RleBoardParser());
                     _instance.AddMovesParser(new Orthodox.EnumeratedMovesParser());
                 }
                 return _instance;

@@ -11,13 +11,13 @@ using ChessByUrl.Rules.Rulesets.Orthodox;
 namespace ChessByUrl.Tests.Parser.Orthodox
 {
     [TestClass]
-    public class CustomBoardParserTests
+    public class RleBoardParserTests
     {
 
         [TestMethod]
         public void Serialise_OtherRuleset_ReturnsNull()
         {
-            var parser = new CustomBoardParser();
+            var parser = new RleBoardParser();
             var ruleset = new OtherRuleset();
             var board = new Board(new Player { Id = 0, Name = "White", ClosestRank=0, FarthestRank=8 }, new BoardRanks(new List<BoardRank>()));
             var result = parser.Serialise(ruleset, board);
@@ -27,7 +27,7 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         [TestMethod]
         public void Parse_OtherRulesetAndCorrectString_ReturnsNull()
         {
-            var parser = new CustomBoardParser();
+            var parser = new RleBoardParser();
             var ruleset = new OtherRuleset();
             var result = parser.Parse(ruleset, "c");
             Assert.IsNull(result);
@@ -36,7 +36,7 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         [TestMethod]
         public void Parse_OrthodoxRulesetAndIncorrectString_ReturnsNull()
         {
-            var parser = new CustomBoardParser();
+            var parser = new RleBoardParser();
             var ruleset = new OrthodoxRuleset();
             var result = parser.Parse(ruleset, "s");
             Assert.IsNull(result);
@@ -89,7 +89,7 @@ namespace ChessByUrl.Tests.Parser.Orthodox
         [TestMethod]
         public void RoundTrip_SerialiseThenParse()
         {
-            var parser = new CustomBoardParser();
+            var parser = new RleBoardParser();
             var ruleset = new OrthodoxRuleset();
 
             var pieces = new List<(int PieceTypeId, Coords Coords)> {
