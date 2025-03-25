@@ -1,8 +1,8 @@
-# ChessByURL Technical Information
+# Chess By URL Technical Information
 
 
 ## URL scheme
-ChessByURL uses the following URL scheme:
+Chess By URL uses the following URL scheme:
 ```
 https://chessbyurl.com/{action}/{ruleset}/{board}/{moves}
 ```
@@ -51,7 +51,7 @@ types themselves as Behaviours (see below).
 The only state stored for the board is the position of the pieces and the current player.
 
 There are two other pieces of state that are typically stored with the board: castling rights and en passant 
-vulnerability. ChessByURL avoids storing these by instead having distinct piece types for each situation (i.e. both 
+vulnerability. Chess By URL avoids storing these by instead having distinct piece types for each situation (i.e. both 
 `Rook` & `RookWithCastlingRights`, and `Pawn` & `PawnVulnerableToEnPassant`), and swapping between them as needed.
 
 ## Moves

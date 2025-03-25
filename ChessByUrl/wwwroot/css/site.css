@@ -124,6 +124,16 @@ html, body {
     color: #6c757d;
 }
 
+#intro {
+    display: flex;
+    flex-direction: row;
+}
+
+#home img.logo {
+    width: 30%;
+}
+
+
 .accordion-item {
     width: 100%;
 }

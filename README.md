@@ -1,9 +1,9 @@
-# ChessByURL
-ChessByURL is a web application that allows users to play chess or share chess puzzles by sharing URLs (via email, 
+![Chess By URL](ChessByUrl/wwwroot/images/logo.jpg)
+Chess By URL is a website that allows users to play chess or share chess puzzles by sharing URLs (via email, 
 message boards, IM apps, etc). The URL contains the full state of the game, so players don't need to worry about 
 user accounts, link expiry, etc.
 
-ChessByURL was developed with the intention of eventually supporting chess variants, including non-standard layouts
+Chess By URL was developed with the intention of eventually supporting chess variants, including non-standard layouts
 and variants with fairy pieces, with the rulesets also embedded in the URLs. Currently, only standard chess is supported.
 
 ## Getting started
