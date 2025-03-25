@@ -1,0 +1,119 @@
+﻿/* wwwroot/css/index.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    margin: 0 auto;
+}
+
+    header img {
+        max-width: 200px;
+        height: auto;
+        margin-right: 20px;
+    }
+
+    header section {
+        flex: 1;
+        text-align: left;
+    }
+
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 20px;
+}
+
+    nav section {
+        background-color: #ffffff;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        margin: 10px;
+        padding: 20px;
+        width: 300px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        nav section h3 {
+            margin-top: 0;
+        }
+
+        nav section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+            nav section ul li {
+                margin-bottom: 10px;
+                width: 100%;
+            }
+
+                nav section ul li a,
+                nav section ul li button {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    margin: 5px 0;
+                    font-size: 16px;
+                    color: #ffffff;
+                    background-color: #007bff;
+                    border: none;
+                    border-radius: 5px;
+                    text-decoration: none;
+                    text-align: center;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                    box-sizing: border-box;
+                    width: 100%;
+                }
+
+                nav section ul li.number-input button,
+                nav section ul li.number-input input {
+                    width: 48%;
+                }
+
+                nav section ul li a:hover,
+                nav section ul li button:hover {
+                    background-color: #0056b3;
+                }
+
+                nav section ul li a.disabled,
+                nav section ul li button:disabled {
+                    background-color: #cccccc;
+                    color: #666666;
+                    cursor: not-allowed;
+                }
+
+                    nav section ul li a.disabled:hover {
+                        background-color: #cccccc;
+                    }
+
+/* Media query for wide screens */
+@media (min-width: 768px) {
+    header {
+        max-width: 800px;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+}
+
+footer {
+    text-align: center;
+    padding: 5px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+}

@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
     Layout = null;
 }
 
@@ -11,104 +11,72 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"] - ChessByUrl</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/chess.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/widgets.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/ChessByUrl.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/index.css" asp-append-version="true" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 </head>
-<body>
-    <div id="home">
-        <h1>Welcome to ChessByUrl!</h1>
-        <div class="accordion" id="chessVariantsAccordion">
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="headingStandardChess">
-                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseStandardChess" aria-expanded="true" aria-controls="collapseStandardChess">
-                        Standard Chess
-                    </button>
-                </h2>
-                <div id="collapseStandardChess" class="accordion-collapse collapse show" aria-labelledby="headingStandardChess" data-bs-parent="#chessVariantsAccordion">
-                    <div class="accordion-body">
-                        <div class="subvariant">
-                            <h3>Standard Start Position</h3>
-                            <p>Begin a bog-standard game of chess.</p>
-                            <a href="/play/o/s" class="btn btn-primary">Play</a>
-                        </div>
-                        <div class="subvariant">
-                            <h3>Edit Start Position</h3>
-                            <p>Edit the standard start position with the default rules.</p>
-                            <button class="btn btn-secondary" disabled>Edit</button>
-                            <p class="text-muted">This feature will be available in the future.</p>
-                        </div>
-                        <div class="subvariant">
-                            <h3>Edit Empty Board</h3>
-                            <p>Edit an empty board with the default rules.</p>
-                            <button class="btn btn-secondary" disabled>Edit</button>
-                            <p class="text-muted">This feature will be available in the future.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="headingChess960">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseChess960" aria-expanded="false" aria-controls="collapseChess960">
-                        Chess960
-                    </button>
-                </h2>
-                <div id="collapseChess960" class="accordion-collapse collapse" aria-labelledby="headingChess960" data-bs-parent="#chessVariantsAccordion">
-                    <div class="accordion-body">
-                        <div class="subvariant">
-                            <h3>Random Position</h3>
-                            <button class="btn btn-secondary" disabled>Start Random Position</button>
-                            <p class="text-muted">This feature will be available in the future.</p>
-                        </div>
-                        <div class="subvariant">
-                            <h3>Numbered Position</h3>
-                            <input type="number" class="form-control" placeholder="Enter position number (1-960)" disabled />
-                            <button class="btn btn-secondary" disabled>Start Numbered Position</button>
-                            <p class="text-muted">This feature will be available in the future.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="headingBigBoard">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBigBoard" aria-expanded="false" aria-controls="collapseBigBoard">
-                        Chess On A Really Big Board
-                    </button>
-                </h2>
-                <div id="collapseBigBoard" class="accordion-collapse collapse" aria-labelledby="headingBigBoard" data-bs-parent="#chessVariantsAccordion">
-                    <div class="accordion-body">
-                        <div class="subvariant">
-                            <h3>Original</h3>
-                            <button class="btn btn-secondary" disabled>Start Original</button>
-                            <p class="text-muted">This feature will be available in the future.</p>
-                        </div>
-                        <div class="subvariant">
-                            <h3>Golden Age</h3>
-                            <button class="btn btn-secondary" disabled>Start Golden Age</button>
-                            <p class="text-muted">This feature will be available in the future.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="accordion-item">
-                <h2 class="accordion-header" id="headingCustom">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCustom" aria-expanded="false" aria-controls="collapseCustom">
-                        Custom
-                    </button>
-                </h2>
-                <div id="collapseCustom" class="accordion-collapse collapse" aria-labelledby="headingCustom" data-bs-parent="#chessVariantsAccordion">
-                    <div class="accordion-body">
-                        <button class="btn btn-secondary" disabled>Start Custom Game</button>
-                        <p class="text-muted">This feature will be available in the future.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<body id="home">
+    <header>
+        <img src="~/images/logo.jpg" alt="Chess By URL" />
+        <section>
+            <p>Welcome to ChessByUrl! <a href="/play/o/s">Start a new game</a>, or browse the variants below.</p>
+            <p>Disabled features will be implemented in the future. For documentation (including roadmap) and 
+                source code, visit <a href="https://github.com/b-h-mck/ChessByUrl">Chess By URL on GitHub</a>.</p>
+        </section>
+    </header>
+    <nav>
+        <section>
+            <h3>Standard Chess</h3>
+            <p>A bog-standard game of chess.</p>
+            <ul>
+                <li>
+                    <a href="/play/o/s">Play</a>
+                </li>
+                <li>
+                    <a class="disabled">Edit</a>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h3>Chess960</h3>
+            <p>Chess960, with a Random or Numbered starting position.</p>
+            <ul>
+                <li>
+                    <a class="disabled">Random</a>
+                </li>
+                <li class="number-input">
+                    <input type="number" placeholder="(1-960)" disabled />
+                    <button disabled>Numbered</button>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h3>Chess On A Really Big Board</h3>
+            <p>16x16 chess variant with several new pieces.</p>
+            <ul>
+                <li>
+                    <a class="disabled">Original</a>
+                </li>
+                <li>
+                    <a class="disabled">Golden Age</a>
+                </li>
+                <li>
+                    <a class="disabled">Edit</a>
+                </li>
+            </ul>
+        </section>
+        <section>
+            <h3>Custom Ruleset</h3>
+            <p>Design your own pieces and rules.</p>
+            <ul>
+                <li>
+                    <a class="disabled">Get started</a>
+                </li>
+            </ul>
+        </section>
+    </nav>
+    <footer>
+        <p>&copy; @DateTime.Now.Year ChessByUrl. Licensed under the <a href="https://opensource.org/licenses/MIT">MIT License</a>.</p>
+    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
