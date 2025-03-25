@@ -7,7 +7,7 @@ Chess By URL was developed with the intention of eventually supporting chess var
 and variants with fairy pieces, with the rulesets also embedded in the URLs. Currently, only standard chess is supported.
 
 ## Getting started
-If you just want to play some chess, [visit the website here](https://chessbyurl.com/).
+If you just want to play some chess, [visit the website here](https://chessbyurl.azurewebsites.net/).
 
 If you want to run/develop the application yourself, you'll just need a development environment for .NET 9.0. This application 
 is very light on dependencies, so after cloning the repository you should be able to just open the .sln file in 
