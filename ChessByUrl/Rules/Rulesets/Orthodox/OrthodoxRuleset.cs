@@ -153,6 +153,10 @@ namespace ChessByUrl.Rules.Rulesets.Orthodox
                     sb.Append('=').Append(promotionPiece.Unicode);
                 }
             }
+            if (move.From.File != move.To.File && boardBeforeMove.GetPiece(move.To) == null)
+            {
+                sb.Append(" e.p.");
+            }
         }
 
         private void AppendCastlingMove(Board boardBeforeMove, Move move, StringBuilder sb)

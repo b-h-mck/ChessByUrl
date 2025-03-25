@@ -7,14 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Rules\Rulesets\Orthodox\PieceBehaviours\**" />
+    <Content Remove="Rules\Rulesets\Orthodox\PieceBehaviours\**" />
+    <EmbeddedResource Remove="Rules\Rulesets\Orthodox\PieceBehaviours\**" />
+    <None Remove="Rules\Rulesets\Orthodox\PieceBehaviours\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Update="Pages\Play.cshtml">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Rules\Rulesets\Orthodox\PieceBehaviours\" />
   </ItemGroup>
 
 </Project>
