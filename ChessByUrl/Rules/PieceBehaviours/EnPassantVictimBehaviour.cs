@@ -20,10 +20,13 @@
 
         public Board AdjustBoardAfterMove(Game gameBeforeMove, Board boardAfterMoveSoFar, Move move, Coords thisSquare, PieceType thisPiece)
         {
-            if (thisSquare != move.To || Math.Abs(move.From.Rank - move.To.Rank) > 1)
+            // If this piece just did a long move, return the board unchanged
+            if (thisSquare == move.To && Math.Abs(move.From.Rank - move.To.Rank) > 1)
             {
                 return boardAfterMoveSoFar;
             }
+
+            // Otherwise, transform the piece
             return boardAfterMoveSoFar.ReplacePiece(thisSquare, Transform());
         }
 
