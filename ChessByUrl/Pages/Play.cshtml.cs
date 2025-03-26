@@ -120,14 +120,16 @@ namespace ChessByUrl.Pages
         public string? GetCurrentPositionUrl(string urlAction)
         {
             urlAction = urlAction.StartsWith("/") ? urlAction : "/" + urlAction;
-            return Url.Page(urlAction, new { rulesetString = RulesetString, boardString = BoardString, movesString = MovesString });
+            var urlParams = new { rulesetString = RulesetString, boardString = BoardString, movesString = MovesString };
+            return Url.Page(urlAction, null, urlParams, "https");
         }
 
         public string? GetRestartGameUrl()
         {
             if (RulesetString == null || BoardString == null)
                 return null;
-            var result = Url.Page("/Play", new { rulesetString = RulesetString, boardString = BoardString, movesString = "" });
+            var urlParams = new { rulesetString = RulesetString, boardString = BoardString, movesString = "" };
+            var result = Url.Page("/Play", null, urlParams, "https");
             return result;
         }
 
@@ -136,7 +138,8 @@ namespace ChessByUrl.Pages
             if (RulesetString == null || Game == null)
                 return null;
             var newBoardString = ParserCollection.Instance.SerialiseBoard(Game.Ruleset, Game.CurrentBoard);
-            return Url.Page("/Play", new { rulesetString = RulesetString, boardString = newBoardString });
+            var urlParams = new { rulesetString = RulesetString, boardString = newBoardString, movesString = "" };
+            return Url.Page("/Play", null, urlParams, "https");
         }
 
 

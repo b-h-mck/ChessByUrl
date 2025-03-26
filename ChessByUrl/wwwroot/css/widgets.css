@@ -5,7 +5,7 @@
 
 
 #gameInfo {
-    height: 8em;
+    min-height: 8em;
     min-width: 10em;
     flex: 0 1 auto;
     overflow: auto;
